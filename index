@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Bald verfügbar ✨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Hintergrund-Animation: schwebende Formen */
+        .bg-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            background: #ff9a9e;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            background: #fad0c4;
+            bottom: 15%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            background: #a18cd1;
+            top: 60%;
+            left: 70%;
+            animation-delay: 4s;
+        }
+
+        .shape:nth-child(4) {
+            width: 250px;
+            height: 250px;
+            background: #fbc2eb;
+            top: 20%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+
+        .shape:nth-child(5) {
+            width: 180px;
+            height: 180px;
+            background: #a6c1ee;
+            bottom: 30%;
+            left: 15%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg) scale(1.1);
+            }
+        }
+
+        /* Hauptcontainer */
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 600px;
+            width: 90%;
+            animation: containerAppear 1s ease-out;
+        }
+
+        @keyframes containerAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Emoji-Animation */
+        .emoji-bounce {
+            font-size: 5rem;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Titel */
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin: 0.5rem 0;
+            letter-spacing: 2px;
+        }
+
+        .highlight {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        /* Untertitel */
+        p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 1rem 0 2rem;
+            line-height: 1.6;
+        }
+
+        /* Ladebalken */
+        .progress-bar {
+            width: 80%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            margin: 1.5rem auto;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f093fb, #f5576c, #ffecd2);
+            border-radius: 50px;
+            animation: loading 3s infinite ease-in-out;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0%;
+                margin-left: 0;
+            }
+            50% {
+                width: 70%;
+                margin-left: 15%;
+            }
+            100% {
+                width: 0%;
+                margin-left: 100%;
+            }
+        }
+
+        /* Countdown / Status */
+        .status {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .status-item:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .status-item:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        /* Social / Info */
+        .social-hint {
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .social-hint a {
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 2px dotted rgba(255, 255, 255, 0.5);
+            transition: all 0.3s;
+        }
+
+        .social-hint a:hover {
+            border-bottom-color: #fff;
+        }
+
+        /* Kleine verspielte Icons */
+        .sparkles {
+            font-size: 2rem;
+            animation: sparkle 1.5s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .emoji-bounce {
+                font-size: 3.5rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .status {
+                gap: 1rem;
+            }
+            .status-item {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hintergrund-Formen -->
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Hauptcontainer -->
+    <div class="container">
+        <div class="emoji-bounce">🚧</div>
+        <h1>Bald <span class="highlight">startklar</span>!</h1>
+        <p>
+            Wir arbeiten mit 💛 daran,<br>
+            etwas ganz Besonderes für dich zu zaubern.
+        </p>
+
+        <!-- Ladebalken -->
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <!-- Status -->
+        <div class="status">
+            <span class="status-item">🎨 Design</span>
+            <span class="status-item">⚡ Entwicklung</span>
+            <span class="status-item">🚀 Launch</span>
+        </div>
+
+        <!-- Verspielte Info -->
+        <div class="social-hint">
+            <span class="sparkles">✨</span> 
+            In Kürze erstrahlt hier eine neue Welt. 
+            <span class="sparkles">✨</span><br>
+            <span style="opacity:0.6;">Bis dahin: </span>
+            <a href="#">📬 Benachrichtige mich</a>
+        </div>
+    </div>
+
+</body>
+</html>

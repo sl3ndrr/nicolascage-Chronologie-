@@ -1,396 +1,889 @@
 <!DOCTYPE html>
 <html lang="de" data-theme="reel">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THE CAGE ARCHIVE — Filmografie &amp; Bewertungen</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>THE CAGE ARCHIVE — Filmografie & Bewertungen</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
 <style>
-/* =========================================================
-   THE CAGE ARCHIVE — Design tokens
-   Konzept: nächtliches Archiv/Lichtspielhaus. Ein Aktenkoffer
-   voller VHS-Kassetten und Kinoplakate, kuratiert von zwei
-   Freunden. Lochstreifen (Sprocket Holes) als durchgehendes
-   Strukturmotiv, VHS-Tracking-Glitch als Signature-Interaktion.
-   ========================================================= */
 :root{
-  --font-display:'Bebas Neue', Impact, sans-serif;
-  --font-body:'Space Grotesk', system-ui, sans-serif;
-  --font-mono:'IBM Plex Mono', monospace;
+  --font-display:"Bebas Neue", Impact, sans-serif;
+  --font-body:"Space Grotesk", system-ui, sans-serif;
+  --font-mono:"IBM Plex Mono", monospace;
 
-  --void:#100c0a;
-  --card:#1c1611;
-  --card-2:#261e17;
-  --rule:#3a2c22;
-  --parchment:#f2e6c9;
-  --parchment-dim:#b8a988;
-  --marquee-red:#c1392b;
-  --marquee-red-glow:#ff6b52;
-  --brass:#cc9c46;
-  --brass-bright:#e8bd6a;
-  --teal-vault:#3f8f86;
-  --good:#5fae7f;
-  --mid:#cc9c46;
-  --bad:#c1392b;
-  --unrated:#6d6255;
+  --bg:#0e0a08;
+  --bg-2:#17100c;
+  --panel:#1f1711;
+  --panel-2:#2a2018;
+  --line:#4a3729;
+  --text:#f3e5c6;
+  --muted:#b8a682;
+  --red:#c63d2d;
+  --red-2:#ff674f;
+  --gold:#d5a64f;
+  --gold-2:#ffd784;
+  --teal:#45a39a;
+  --green:#67bd86;
+  --amber:#d5a64f;
+  --bad:#d85342;
+  --none:#746858;
 
-  --shadow-sm:0 2px 8px rgba(0,0,0,.35);
-  --shadow-md:0 8px 24px rgba(0,0,0,.45);
-  --shadow-lg:0 20px 50px rgba(0,0,0,.55);
+  --radius:16px;
+  --radius-sm:10px;
+  --shadow:0 20px 60px rgba(0,0,0,.45);
+  --shadow-soft:0 12px 35px rgba(0,0,0,.28);
   --ease:cubic-bezier(.16,.84,.44,1);
 }
 
-[data-theme="daylight"]{
-  --void:#f4ecd8;
-  --card:#fffaf0;
-  --card-2:#f0e6cc;
-  --rule:#ddccaa;
-  --parchment:#241a10;
-  --parchment-dim:#6b5c45;
-  --marquee-red:#a5301f;
-  --brass:#8a6420;
-  --unrated:#a89a80;
+[data-theme="day"]{
+  --bg:#f5ecd7;
+  --bg-2:#eadcc0;
+  --panel:#fff8e8;
+  --panel-2:#efe0c3;
+  --line:#d4bf99;
+  --text:#21160d;
+  --muted:#6e5d42;
+  --red:#a92f22;
+  --gold:#8d6420;
+  --gold-2:#ad7e30;
+  --none:#9b8d74;
 }
 
 [data-theme="contrast"]{
-  --void:#000; --card:#000; --card-2:#0a0a0a; --rule:#fff;
-  --parchment:#fff; --parchment-dim:#fff;
-  --marquee-red:#ff3b30; --brass:#ffd60a; --teal-vault:#00e5ff;
-  --good:#39ff6a; --mid:#ffd60a; --bad:#ff3b30; --unrated:#fff;
+  --bg:#000;
+  --bg-2:#000;
+  --panel:#050505;
+  --panel-2:#101010;
+  --line:#fff;
+  --text:#fff;
+  --muted:#fff;
+  --red:#ff3b30;
+  --gold:#ffd60a;
+  --gold-2:#ffd60a;
+  --teal:#00e5ff;
+  --green:#39ff6a;
+  --amber:#ffd60a;
+  --bad:#ff3b30;
+  --none:#fff;
 }
-[data-theme="contrast"] *{ text-shadow:none !important; box-shadow:none !important; }
 
 @media (prefers-reduced-motion: reduce){
-  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 
-*{ box-sizing:border-box; margin:0; padding:0; }
-html{ scroll-behavior:smooth; }
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{
-  background:var(--void); color:var(--parchment); font-family:var(--font-body);
-  line-height:1.5; padding-bottom:6rem; overflow-x:hidden;
-  transition:background-color .3s, color .3s;
-  background-image:
-    radial-gradient(ellipse at 20% -10%, rgba(204,156,70,.08), transparent 45%),
-    radial-gradient(ellipse at 90% 10%, rgba(193,57,43,.07), transparent 40%);
+  min-height:100vh;
+  color:var(--text);
+  font-family:var(--font-body);
+  background:
+    radial-gradient(circle at 15% -10%, rgba(213,166,79,.18), transparent 34rem),
+    radial-gradient(circle at 88% 8%, rgba(198,61,45,.16), transparent 30rem),
+    linear-gradient(180deg,var(--bg),var(--bg-2));
+  line-height:1.5;
+  overflow-x:hidden;
+  padding-bottom:6rem;
 }
-a{ color:inherit; text-decoration:none; }
-button, input, select{ font:inherit; background:none; border:none; color:inherit; }
-button{ cursor:pointer; }
-:focus-visible{ outline:3px solid var(--brass-bright); outline-offset:3px; }
-.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
-.container{ max-width:1400px; margin:0 auto; padding:0 1.5rem; }
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  opacity:.45;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 4px),
+    radial-gradient(circle at center, transparent 0 52%, rgba(0,0,0,.38));
+}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--gold-2);outline-offset:4px}
+.container{width:min(1440px,calc(100% - 32px));margin-inline:auto}
+.hidden{display:none!important}
 
-/* ---------- Sprocket strip: signature structural motif ---------- */
-.sprocket{
-  height:14px; width:100%;
-  background-image: radial-gradient(circle 4px, var(--void) 4px, transparent 4.2px);
-  background-size:26px 14px;
-  background-position:0 center;
-  background-color:var(--brass);
-  background-repeat:repeat-x;
+.filmstrip{
+  height:18px;
+  background:
+    radial-gradient(circle 5px at 10px 50%, var(--bg) 98%, transparent) 0 0/34px 18px repeat-x,
+    linear-gradient(90deg,var(--gold),var(--gold-2),var(--gold));
+  box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.12);
 }
-.sprocket.animate{ animation: reel-run 14s linear infinite; }
-@keyframes reel-run{ from{ background-position:0 center; } to{ background-position:-520px center; } }
-.sprocket.top{ box-shadow:0 2px 0 var(--rule); }
-.sprocket.bottom{ box-shadow:0 -2px 0 var(--rule); }
+.filmstrip.animate{animation:filmrun 18s linear infinite}
+@keyframes filmrun{to{background-position:-680px 0,0 0}}
 
-/* ---------- Header ---------- */
-header{ position:sticky; top:0; z-index:60; background:var(--void); }
-.header-content{
-  display:flex; justify-content:space-between; align-items:center; gap:1rem;
-  height:4.25rem; max-width:1400px; margin:0 auto; padding:0 1.5rem;
+.header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(14,10,8,.78);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.08);
 }
-.logo{ display:flex; align-items:baseline; gap:.6rem; }
-.logo-mark{ font-family:var(--font-display); font-size:1.7rem; letter-spacing:.06em; color:var(--parchment); }
-.logo-badge{
-  font-family:var(--font-mono); font-size:.65rem; letter-spacing:.08em; color:var(--void);
-  background:var(--brass); padding:.15rem .5rem; border-radius:2px; text-transform:uppercase; font-weight:600;
+[data-theme="day"] .header{background:rgba(245,236,215,.78)}
+.header-inner{
+  min-height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
 }
-nav{ display:flex; gap:.25rem; overflow-x:auto; }
+.logo{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  min-width:max-content;
+}
+.logo-mark{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:#1b1109;
+  font-family:var(--font-display);
+  font-size:1.8rem;
+  background:radial-gradient(circle at 35% 28%, var(--gold-2), var(--gold));
+  box-shadow:0 0 30px rgba(213,166,79,.25);
+}
+.logo-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1;
+}
+.logo-title{
+  font-family:var(--font-display);
+  font-size:1.65rem;
+  letter-spacing:.045em;
+}
+.logo-sub{
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.nav{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  overflow:auto;
+  padding:.25rem;
+}
 .nav-btn{
-  padding:.5rem .9rem; font-family:var(--font-mono); font-size:.72rem; letter-spacing:.06em;
-  text-transform:uppercase; color:var(--parchment-dim); white-space:nowrap; border-radius:3px;
-  transition:color .2s, background-color .2s; position:relative;
+  position:relative;
+  padding:.65rem .85rem;
+  border-radius:999px;
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  transition:.2s var(--ease);
 }
-.nav-btn::after{
-  content:''; position:absolute; left:.9rem; right:.9rem; bottom:.15rem; height:2px;
-  background:var(--marquee-red); transform:scaleX(0); transform-origin:left; transition:transform .25s var(--ease);
+.nav-btn:hover,.nav-btn.active{
+  color:var(--text);
+  background:rgba(255,255,255,.07);
 }
-.nav-btn:hover{ color:var(--parchment); background:var(--card); }
-.nav-btn.active{ color:var(--parchment); }
-.nav-btn.active::after{ transform:scaleX(1); }
-.header-actions{ display:flex; gap:.4rem; }
-.icon-btn{
-  padding:.5rem .6rem; border-radius:3px; background:var(--card); color:var(--parchment-dim);
-  transition:color .2s, transform .2s;
-}
-.icon-btn:hover{ color:var(--brass-bright); transform:translateY(-1px); }
-
-/* ---------- Hero marquee ---------- */
-.marquee-hero{
-  padding:3.5rem 0 2rem; text-align:center; position:relative;
-}
-.marquee-hero h1{
-  font-family:var(--font-display); font-size:clamp(2.6rem, 9vw, 6.2rem);
-  letter-spacing:.03em; line-height:.95; color:var(--parchment);
-  text-shadow:0 0 24px rgba(204,156,70,.25);
-}
-.marquee-hero h1 .letter{
-  display:inline-block; opacity:0; transform:translateY(.4em) scale(.8);
-  animation:flicker-in .5s var(--ease) forwards;
-}
-@keyframes flicker-in{
-  0%{ opacity:0; transform:translateY(.4em) scale(.8); }
-  55%{ opacity:.5; }
-  70%{ opacity:1; transform:translateY(-.03em) scale(1.02); }
-  100%{ opacity:1; transform:translateY(0) scale(1); }
-}
-.marquee-hero .tagline{
-  font-family:var(--font-mono); font-size:.85rem; letter-spacing:.05em; color:var(--brass);
-  margin-top:.75rem; text-transform:uppercase;
-}
-.marquee-hero .curators{ color:var(--parchment-dim); font-size:.9rem; margin-top:.35rem; }
-
-.stat-strip{ display:flex; justify-content:center; gap:2.5rem; margin-top:2rem; flex-wrap:wrap; }
-.stat-strip .s-item{ text-align:center; }
-.stat-strip .s-val{ font-family:var(--font-mono); font-size:1.7rem; font-weight:600; color:var(--brass-bright); }
-.stat-strip .s-label{ font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--parchment-dim); }
-
-/* ---------- Film des Tages ---------- */
-.motd-banner{
-  background:linear-gradient(120deg, var(--card) 0%, var(--card-2) 100%);
-  border:1px solid var(--rule); border-radius:6px; margin:2rem 0; padding:1.5rem;
-  display:grid; grid-template-columns:110px 1fr auto; gap:1.5rem; align-items:center;
-  box-shadow:var(--shadow-md); position:relative; overflow:hidden;
-}
-.motd-banner::before{
-  content:''; position:absolute; inset:0; pointer-events:none;
-  background:repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px);
-}
-.motd-badge{
-  position:absolute; top:1rem; right:1rem; background:var(--marquee-red); color:#fff;
-  font-family:var(--font-mono); font-size:.65rem; font-weight:700; letter-spacing:.05em;
-  padding:.25rem .7rem; border-radius:999px; text-transform:uppercase;
-}
-.motd-poster{ width:110px; height:160px; object-fit:cover; border-radius:4px; box-shadow:var(--shadow-sm); }
-.motd-info h2{ font-family:var(--font-display); font-size:1.7rem; letter-spacing:.02em; }
-.motd-meta{ color:var(--parchment-dim); font-size:.85rem; margin:.25rem 0 .6rem; font-family:var(--font-mono); }
-
-/* ---------- Controls ---------- */
-.controls-bar{
-  background:var(--card); border:1px solid var(--rule); border-radius:6px; padding:1rem;
-  margin-bottom:2rem; display:flex; flex-wrap:wrap; gap:1rem; align-items:center; justify-content:space-between;
-}
-.search-box{
-  display:flex; align-items:center; background:var(--void); border-radius:4px; padding:.55rem .8rem;
-  flex:1; min-width:230px; border:1px solid var(--rule);
-}
-.search-box:focus-within{ border-color:var(--brass); }
-.search-box input{ width:100%; margin-left:.5rem; outline:none; font-family:var(--font-body); }
-.filter-group{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
-.select-input{
-  background:var(--void); padding:.55rem .7rem; border-radius:4px; font-size:.82rem;
-  color:var(--parchment); border:1px solid var(--rule); font-family:var(--font-body);
+.nav-btn.active::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:4px;
+  width:22px;
+  height:2px;
+  transform:translateX(-50%);
+  border-radius:2px;
+  background:var(--red-2);
 }
 
-/* ---------- Views ---------- */
-.view-section{ display:none; }
-.view-section.active{ display:block; animation:fadeUp .4s var(--ease); }
-@keyframes fadeUp{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
-
-.reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s var(--ease), transform .6s var(--ease); }
-.reveal.in{ opacity:1; transform:translateY(0); }
-
-/* Grid of movie cards, styled as VHS spines / film canisters */
-.movies-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:1.4rem; }
-.movie-card{
-  background:var(--card); border:1px solid var(--rule); border-radius:6px; overflow:hidden;
-  display:flex; flex-direction:column; cursor:pointer; position:relative;
-  transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s;
+.actions{display:flex;gap:.45rem}
+.icon-btn,.pill-btn{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.045);
+  border-radius:999px;
+  min-height:42px;
+  padding:.55rem .85rem;
+  color:var(--text);
+  transition:.2s var(--ease);
 }
-.movie-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-lg); border-color:var(--brass); }
-.poster-wrapper{ position:relative; aspect-ratio:2/3; background:var(--card-2); overflow:hidden; }
-.poster-wrapper img{ width:100%; height:100%; object-fit:cover; transition:transform .5s var(--ease), filter .3s; }
-.movie-card:hover .poster-wrapper img{ transform:scale(1.06); }
-
-/* VHS tracking glitch on hover — signature interaction */
-.poster-wrapper::after{
-  content:''; position:absolute; inset:0; opacity:0; pointer-events:none;
-  background:repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 2px 4px);
-  mix-blend-mode:overlay; transition:opacity .2s;
+.icon-btn:hover,.pill-btn:hover{
+  transform:translateY(-2px);
+  border-color:var(--gold);
+  box-shadow:0 0 0 4px rgba(213,166,79,.1);
 }
-.movie-card:hover .poster-wrapper::after{ opacity:1; animation:scan-jitter 1.4s steps(12) infinite; }
-@keyframes scan-jitter{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(3px);} }
-.movie-card:hover .poster-wrapper img{ filter:saturate(1.15); }
-
-.badge-avg{
-  position:absolute; top:.5rem; right:.5rem; background:rgba(16,12,10,.88); backdrop-filter:blur(4px);
-  font-family:var(--font-mono); font-weight:700; font-size:.8rem; padding:.25rem .5rem; border-radius:4px;
-  border:1px solid rgba(255,255,255,.12);
+.pill-btn{
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.035em;
 }
-.card-content{ padding:.9rem 1rem 1rem; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
-.card-title{ font-weight:600; font-size:.95rem; line-height:1.3; }
-.card-sub{ font-size:.72rem; color:var(--parchment-dim); margin:.2rem 0 .7rem; font-family:var(--font-mono); }
-.card-ratings{ display:flex; justify-content:space-between; font-size:.72rem; border-top:1px solid var(--rule); padding-top:.6rem; font-family:var(--font-mono); }
-.rating-item{ display:flex; flex-direction:column; align-items:center; gap:.1rem; color:var(--parchment-dim); }
-.rating-val{ font-weight:700; color:var(--parchment); }
 
-/* Table */
-.table-responsive{ overflow-x:auto; border:1px solid var(--rule); border-radius:6px; background:var(--card); }
-.movies-table{ width:100%; border-collapse:collapse; text-align:left; font-size:.85rem; }
-.movies-table th, .movies-table td{ padding:.7rem 1rem; border-bottom:1px solid var(--rule); }
-.movies-table th{ background:var(--card-2); font-weight:600; color:var(--brass); cursor:pointer; font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; }
-.movies-table tr{ transition:background-color .15s; }
-.movies-table tr:hover{ background:var(--card-2); cursor:pointer; }
-
-/* Timeline */
-.timeline{ position:relative; max-width:800px; margin:0 auto; padding:2rem 0; }
-.timeline::before{ content:''; position:absolute; left:50%; width:2px; height:100%; background:var(--rule); }
-.timeline-item{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1.6rem; position:relative; }
-.timeline-item:nth-child(even){ flex-direction:row-reverse; }
-.timeline-content{ width:45%; background:var(--card); padding:.9rem; border-radius:6px; border:1px solid var(--rule); cursor:pointer; transition:transform .25s var(--ease), border-color .25s; }
-.timeline-content:hover{ transform:scale(1.03); border-color:var(--brass); }
-.timeline-year{ position:absolute; left:50%; transform:translateX(-50%); background:var(--marquee-red); color:#fff; padding:.2rem .65rem; border-radius:999px; font-family:var(--font-mono); font-weight:700; font-size:.7rem; }
-
-/* Gallery */
-.gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:1rem; }
-.gallery-item{ aspect-ratio:2/3; border-radius:6px; overflow:hidden; position:relative; cursor:pointer; border:1px solid var(--rule); }
-.gallery-item img{ width:100%; height:100%; object-fit:cover; transition:transform .4s; }
-.gallery-item:hover img{ transform:scale(1.08); }
-.gallery-overlay{
-  position:absolute; inset:0; background:linear-gradient(0deg, rgba(16,12,10,.92), rgba(16,12,10,.1) 60%);
-  opacity:0; transition:opacity .25s; display:flex; flex-direction:column; justify-content:flex-end; padding:.8rem; text-align:left;
+.hero{
+  padding:4rem 0 2rem;
+  text-align:center;
 }
-.gallery-item:hover .gallery-overlay{ opacity:1; }
-
-/* Compare */
-.compare-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:1.5rem; }
-.compare-col{ background:var(--card); padding:1.4rem; border-radius:6px; border:1px solid var(--rule); }
-.bar-chart-row{ margin-bottom:1rem; }
-.bar-label{ display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:.25rem; font-family:var(--font-mono); }
-.bar-bg{ width:100%; height:8px; background:var(--void); border-radius:4px; overflow:hidden; }
-.bar-fill{ height:100%; border-radius:4px; transition:width .7s var(--ease); }
-
-/* Stats */
-.stats-cards{ display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
-.stat-card{ background:var(--card); padding:1.2rem; border-radius:6px; border:1px solid var(--rule); text-align:center; }
-.stat-card > div:first-child{ font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--parchment-dim); font-family:var(--font-mono); }
-.stat-val{ font-family:var(--font-display); font-size:2.1rem; letter-spacing:.02em; color:var(--brass-bright); margin-top:.4rem; }
-.charts-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(400px,1fr)); gap:1.5rem; }
-.chart-container{ background:var(--card); padding:1.4rem; border-radius:6px; border:1px solid var(--rule); }
-
-/* Modal */
-.modal-overlay{
-  position:fixed; inset:0; background:rgba(0,0,0,.75); backdrop-filter:blur(6px); z-index:100;
-  display:none; justify-content:center; align-items:center; padding:1rem; opacity:0; transition:opacity .2s;
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.35rem .75rem;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--gold-2);
+  background:rgba(255,255,255,.04);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
 }
-.modal-overlay.open{ display:flex; opacity:1; }
-.modal{
-  background:var(--card); width:100%; max-width:720px; border-radius:8px; border:1px solid var(--rule);
-  overflow:hidden; box-shadow:var(--shadow-lg); display:grid; grid-template-columns:250px 1fr; max-height:90vh;
-  animation:projector-flash .35s var(--ease);
+.hero h1{
+  margin-top:1rem;
+  font-family:var(--font-display);
+  font-size:clamp(4rem,13vw,10.5rem);
+  line-height:.82;
+  letter-spacing:.025em;
+  text-shadow:0 0 40px rgba(213,166,79,.24);
 }
-@keyframes projector-flash{ 0%{ filter:brightness(2.4); transform:scale(.97); opacity:0; } 100%{ filter:brightness(1); transform:scale(1); opacity:1; } }
-.modal-poster{ width:100%; height:100%; object-fit:cover; background:var(--card-2); }
-.modal-body{ padding:1.8rem; overflow-y:auto; display:flex; flex-direction:column; justify-content:space-between; }
-.modal-close{ align-self:flex-end; font-size:1.4rem; color:var(--parchment-dim); cursor:pointer; }
-.modal-close:hover{ color:var(--marquee-red); }
-.rating-panel{ background:var(--card-2); padding:1rem; border-radius:6px; margin-bottom:1.4rem; border:1px solid var(--rule); }
-.rating-panel h3{ font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--parchment-dim); margin-bottom:.6rem; }
-.rating-panel .rgrid{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; font-size:.85rem; }
-.rating-panel .rgrid .full{ grid-column:span 2; border-top:1px solid var(--rule); padding-top:.5rem; }
+.hero h1 span{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(.35em) scale(.9);
+  animation:letterIn .55s var(--ease) forwards;
+}
+@keyframes letterIn{to{opacity:1;transform:none}}
+.hero-copy{
+  max-width:760px;
+  margin:1.2rem auto 0;
+  color:var(--muted);
+  font-size:1.02rem;
+}
+.stats-strip{
+  margin:2rem auto 0;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(130px,1fr));
+  gap:.85rem;
+  max-width:850px;
+}
+.stat-mini{
+  padding:1rem;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));
+  box-shadow:var(--shadow-soft);
+}
+.stat-mini strong{
+  display:block;
+  font-family:var(--font-display);
+  color:var(--gold-2);
+  font-size:2.2rem;
+  line-height:1;
+}
+.stat-mini span{
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
 
-/* FAB */
+.featured{
+  position:relative;
+  margin:2rem 0;
+  padding:1rem;
+  border:1px solid var(--line);
+  border-radius:calc(var(--radius) + 6px);
+  background:
+    linear-gradient(135deg,rgba(198,61,45,.18),transparent 34%),
+    linear-gradient(180deg,var(--panel),var(--panel-2));
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.featured::after{
+  content:"";
+  position:absolute;
+  inset:auto -20% -45% -20%;
+  height:180px;
+  background:radial-gradient(ellipse,rgba(213,166,79,.14),transparent 70%);
+}
+.featured-inner{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:115px 1fr auto;
+  gap:1.25rem;
+  align-items:center;
+}
+.poster{
+  width:100%;
+  aspect-ratio:2/3;
+  object-fit:cover;
+  background:var(--panel-2);
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 18px 35px rgba(0,0,0,.38);
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  width:max-content;
+  padding:.28rem .65rem;
+  border-radius:999px;
+  background:var(--red);
+  color:#fff;
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.featured h2{
+  margin:.55rem 0 .25rem;
+  font-family:var(--font-display);
+  font-size:2.4rem;
+  line-height:.95;
+  letter-spacing:.025em;
+}
+.meta{
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.78rem;
+}
+
+.controls{
+  margin:1.5rem 0 1.25rem;
+  padding:1rem;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:rgba(255,255,255,.045);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:1rem;
+  align-items:center;
+}
+.search{
+  display:flex;
+  align-items:center;
+  gap:.65rem;
+  min-height:48px;
+  padding:0 .9rem;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--bg);
+}
+.search input{
+  width:100%;
+  border:0;
+  outline:0;
+  background:transparent;
+}
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.55rem;
+  justify-content:flex-end;
+}
+.select{
+  min-height:48px;
+  border:1px solid var(--line);
+  background:var(--bg);
+  border-radius:999px;
+  padding:0 .8rem;
+  color:var(--text);
+}
+.view{display:none}
+.view.active{display:block;animation:fadeUp .35s var(--ease)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(205px,1fr));
+  gap:1.1rem;
+}
+.card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  box-shadow:var(--shadow-soft);
+  cursor:pointer;
+  transition:.28s var(--ease);
+}
+.card:hover{
+  transform:translateY(-7px);
+  border-color:var(--gold);
+  box-shadow:var(--shadow);
+}
+.card-media{
+  position:relative;
+  overflow:hidden;
+}
+.card-media::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 1px,transparent 1px 4px);
+  mix-blend-mode:overlay;
+}
+.card:hover .card-media::after{
+  opacity:1;
+  animation:jitter .8s steps(6) infinite;
+}
+@keyframes jitter{50%{transform:translateY(4px)}}
+.card img{
+  display:block;
+  width:100%;
+  aspect-ratio:2/3;
+  object-fit:cover;
+  transition:.45s var(--ease);
+}
+.card:hover img{transform:scale(1.06);filter:saturate(1.1) contrast(1.04)}
+.score{
+  position:absolute;
+  top:.7rem;
+  right:.7rem;
+  z-index:2;
+  padding:.32rem .55rem;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:999px;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);
+  font-family:var(--font-mono);
+  font-size:.75rem;
+  font-weight:800;
+}
+.card-body{padding:.95rem}
+.card-title{
+  min-height:2.5em;
+  font-weight:700;
+  line-height:1.25;
+}
+.card-sub{
+  margin-top:.25rem;
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+}
+.card-row{
+  margin-top:.85rem;
+  padding-top:.75rem;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  gap:.55rem;
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.68rem;
+}
+.card-row strong{display:block;color:var(--text)}
+
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--panel);
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:920px;
+}
+th,td{
+  padding:.82rem .95rem;
+  border-bottom:1px solid var(--line);
+  text-align:left;
+  vertical-align:top;
+}
+th{
+  position:sticky;
+  top:0;
+  background:var(--panel-2);
+  color:var(--gold-2);
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+tbody tr{transition:.18s}
+tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
+
+.timeline{
+  max-width:900px;
+  margin:0 auto;
+  padding:1rem 0 2rem;
+  position:relative;
+}
+.timeline::before{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:2px;
+  background:linear-gradient(var(--line),var(--gold),var(--line));
+}
+.t-item{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 70px 1fr;
+  gap:1rem;
+  margin:1rem 0;
+  align-items:center;
+}
+.t-item:nth-child(even) .t-card{grid-column:3}
+.t-year{
+  grid-column:2;
+  justify-self:center;
+  background:var(--red);
+  color:#fff;
+  border-radius:999px;
+  padding:.3rem .55rem;
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  font-weight:800;
+  z-index:1;
+}
+.t-card{
+  grid-column:1;
+  display:flex;
+  align-items:center;
+  gap:.85rem;
+  padding:.75rem;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--panel);
+  cursor:pointer;
+  transition:.2s var(--ease);
+}
+.t-card:hover{transform:scale(1.025);border-color:var(--gold)}
+.t-card img{width:48px;height:72px;object-fit:cover;border-radius:9px}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(145px,1fr));
+  gap:.8rem;
+}
+.g-item{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+}
+.g-item img{
+  display:block;
+  width:100%;
+  aspect-ratio:2/3;
+  object-fit:cover;
+  transition:.35s;
+}
+.g-item:hover img{transform:scale(1.08)}
+.g-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:.75rem;
+  background:linear-gradient(0deg,rgba(0,0,0,.9),transparent 65%);
+  opacity:0;
+  transition:.2s;
+}
+.g-item:hover .g-overlay{opacity:1}
+
+.compare-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1rem;
+}
+.compare-card,.chart-card,.stat-card{
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--panel);
+  padding:1rem;
+  box-shadow:var(--shadow-soft);
+}
+.compare-head{
+  display:flex;
+  align-items:center;
+  gap:.9rem;
+  margin-bottom:1rem;
+}
+.compare-head img{width:72px;height:108px;object-fit:cover;border-radius:12px}
+.bar{margin:.85rem 0}
+.bar-label{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.25rem;
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.75rem;
+}
+.bar-bg{
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  background:var(--bg);
+}
+.bar-fill{
+  height:100%;
+  width:0;
+  border-radius:999px;
+  transition:width .7s var(--ease);
+}
+
+.stat-cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+  margin-bottom:1rem;
+}
+.stat-card span{
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.stat-card strong{
+  display:block;
+  margin-top:.35rem;
+  color:var(--gold-2);
+  font-family:var(--font-display);
+  font-size:2.25rem;
+  line-height:1;
+}
+.charts{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1rem;
+}
+
+.good{color:var(--green)!important}
+.mid{color:var(--amber)!important}
+.low{color:var(--bad)!important}
+.none{color:var(--none)!important}
+.bar-fill.good{background:var(--green)}
+.bar-fill.mid{background:var(--amber)}
+.bar-fill.low{background:var(--bad)}
+.bar-fill.none{background:var(--none)}
+
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:3rem 1rem;
+  color:var(--muted);
+  font-family:var(--font-mono);
+}
+
 .fab{
-  position:fixed; bottom:2rem; right:2rem; z-index:40; background:var(--marquee-red); color:#fff;
-  padding:.75rem 1.2rem; border-radius:999px; font-weight:600; box-shadow:var(--shadow-lg);
-  display:flex; align-items:center; gap:.5rem; transition:transform .25s var(--ease), background-color .2s;
-  font-family:var(--font-mono); font-size:.8rem; letter-spacing:.03em;
+  position:fixed;
+  right:1.4rem;
+  bottom:1.4rem;
+  z-index:40;
+  border-radius:999px;
+  padding:.9rem 1rem;
+  background:linear-gradient(135deg,var(--red),#8f2118);
+  color:#fff;
+  box-shadow:var(--shadow);
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.035em;
+  transition:.22s var(--ease);
 }
-.fab:hover{ background:#a5301f; transform:scale(1.06) rotate(-2deg); }
+.fab:hover{transform:translateY(-3px) rotate(-1.5deg)}
 
-/* Reel timecode counter — signature scroll indicator */
 .timecode{
-  position:fixed; bottom:1.2rem; left:1.2rem; z-index:40; font-family:var(--font-mono); font-size:.72rem;
-  color:var(--brass); background:var(--card); border:1px solid var(--rule); padding:.35rem .6rem; border-radius:4px;
-  letter-spacing:.05em; box-shadow:var(--shadow-sm); pointer-events:none; opacity:.85;
+  position:fixed;
+  left:1rem;
+  bottom:1rem;
+  z-index:40;
+  padding:.35rem .55rem;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(12px);
+  color:var(--gold-2);
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  pointer-events:none;
 }
 
-/* Color coding */
-.c-high{ color:var(--good) !important; }
-.c-mid{ color:var(--mid) !important; }
-.c-low{ color:var(--bad) !important; }
-.c-none{ color:var(--unrated) !important; }
-.bar-fill.c-high{ background:var(--good); }
-.bar-fill.c-mid{ background:var(--mid); }
-.bar-fill.c-low{ background:var(--bad); }
-.bar-fill.c-none{ background:var(--unrated); }
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(14px);
+}
+.modal-overlay.open{display:flex}
+.modal{
+  width:min(900px,100%);
+  max-height:92vh;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:var(--panel);
+  box-shadow:var(--shadow);
+  display:grid;
+  grid-template-columns:310px 1fr;
+  animation:projector .28s var(--ease);
+}
+@keyframes projector{from{opacity:0;transform:scale(.96);filter:brightness(2)}to{opacity:1;transform:none;filter:none}}
+.modal-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  background:var(--panel-2);
+}
+.modal-body{
+  padding:1.25rem;
+  overflow:auto;
+}
+.modal-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:start;
+  gap:1rem;
+}
+.close{
+  width:42px;
+  height:42px;
+  border:1px solid var(--line);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:var(--muted);
+}
+.close:hover{color:#fff;background:var(--red)}
+.modal h2{
+  margin:.75rem 0 .25rem;
+  font-family:var(--font-display);
+  font-size:2.7rem;
+  line-height:.9;
+}
+.rating-box{
+  margin-top:1.25rem;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--panel-2);
+  padding:1rem;
+}
+.rating-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.65rem;
+}
+.rating-grid div{
+  padding:.65rem;
+  border-radius:12px;
+  background:rgba(255,255,255,.045);
+}
+.rating-grid .full{grid-column:1/-1}
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:.65rem;
+  margin-top:1rem;
+  flex-wrap:wrap;
+}
 
-.empty-note{ text-align:center; padding:3rem 1rem; color:var(--parchment-dim); font-family:var(--font-mono); font-size:.85rem; }
-
-@media (max-width:768px){
-  .motd-banner{ grid-template-columns:1fr; text-align:center; }
-  .motd-poster{ margin:0 auto; }
-  .modal{ grid-template-columns:1fr; }
-  .modal-poster{ max-height:280px; }
-  .compare-grid{ grid-template-columns:1fr; }
-  .timeline::before{ left:0; }
-  .timeline-item, .timeline-item:nth-child(even){ flex-direction:column; align-items:flex-start; padding-left:1.4rem; }
-  .timeline-content{ width:100%; }
-  .timeline-year{ left:0; transform:none; }
-  .charts-grid{ grid-template-columns:1fr; }
-  .timecode{ display:none; }
+@media (max-width:980px){
+  .header-inner{flex-wrap:wrap;padding:.7rem 0}
+  .nav{order:3;width:100%}
+  .controls{grid-template-columns:1fr}
+  .filters{justify-content:flex-start}
+  .stats-strip,.stat-cards{grid-template-columns:repeat(2,1fr)}
+  .charts,.compare-grid{grid-template-columns:1fr}
+  .featured-inner{grid-template-columns:90px 1fr}
+  .featured-inner .pill-btn{grid-column:1/-1}
+}
+@media (max-width:700px){
+  .hero{padding-top:2.5rem}
+  .stats-strip,.stat-cards{grid-template-columns:1fr 1fr}
+  .featured-inner{grid-template-columns:1fr;text-align:center}
+  .featured .poster{width:130px;margin:auto}
+  .featured .badge{margin:auto}
+  .timeline::before{left:18px}
+  .t-item{grid-template-columns:42px 1fr}
+  .t-year{grid-column:1;grid-row:1;justify-self:start}
+  .t-card,.t-item:nth-child(even) .t-card{grid-column:2}
+  .modal{grid-template-columns:1fr}
+  .modal-img{max-height:330px}
+  .timecode{display:none}
 }
 </style>
 </head>
+
 <body>
+<div class="filmstrip animate"></div>
 
-<div class="sprocket top animate"></div>
-
-<header>
-  <div class="header-content">
-    <a href="#" class="logo">
-      <span class="logo-mark">THE CAGE ARCHIVE</span>
-      <span class="logo-badge">Est. 1982</span>
+<header class="header">
+  <div class="container header-inner">
+    <a class="logo" href="#" aria-label="THE CAGE ARCHIVE Startseite">
+      <span class="logo-mark">C</span>
+      <span class="logo-text">
+        <span class="logo-title">THE CAGE ARCHIVE</span>
+        <span class="logo-sub">Tristan & Vincent Collection</span>
+      </span>
     </a>
-    <nav role="navigation" aria-label="Hauptnavigation">
-      <button class="nav-btn active" onclick="switchView('overview', this)">Übersicht</button>
-      <button class="nav-btn" onclick="switchView('timeline', this)">Zeitstrahl</button>
-      <button class="nav-btn" onclick="switchView('gallery', this)">Poster Wall</button>
-      <button class="nav-btn" onclick="switchView('compare', this)">Vergleich</button>
-      <button class="nav-btn" onclick="switchView('stats', this)">Statistiken</button>
+
+    <nav class="nav" aria-label="Hauptnavigation">
+      <button class="nav-btn active" data-view="overview">Übersicht</button>
+      <button class="nav-btn" data-view="timeline">Zeitstrahl</button>
+      <button class="nav-btn" data-view="gallery">Poster Wall</button>
+      <button class="nav-btn" data-view="compare">Vergleich</button>
+      <button class="nav-btn" data-view="stats">Statistiken</button>
     </nav>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="toggleTheme()" aria-label="Theme wechseln" title="Nacht/Tag">🌓</button>
-      <button class="icon-btn" onclick="toggleContrast()" aria-label="Kontrastmodus" title="Hoher Kontrast">👁️</button>
+
+    <div class="actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Theme wechseln" title="Theme wechseln">🌓</button>
+      <button class="icon-btn" id="contrastBtn" aria-label="Kontrastmodus" title="Kontrastmodus">👁</button>
     </div>
   </div>
 </header>
-<div class="sprocket bottom"></div>
 
 <main class="container">
-
-  <section class="marquee-hero">
-    <h1 id="hero-title"></h1>
-    <div class="tagline">Zwei Freunde. Ein Lebenswerk. Jede Wertung mit Herzblut vergeben.</div>
-    <div class="curators">kuratiert von Tristan &amp; Vincent</div>
-    <div class="stat-strip" id="stat-strip"></div>
+  <section class="hero">
+    <div class="kicker">🎞 Persönliches Filmarchiv</div>
+    <h1 id="heroTitle"></h1>
+    <p class="hero-copy">
+      Eine kuratierte Nicolas-Cage-Filmografie mit persönlichen Bewertungen, Kritikerwerten,
+      Posterwand, Timeline, Vergleichsansicht und Statistik-Auswertung.
+    </p>
+    <div class="stats-strip" id="statsStrip"></div>
   </section>
 
-  <section class="motd-banner reveal" id="motd-container" aria-label="Film des Tages"></section>
+  <section class="featured" id="featured"></section>
 
-  <div class="controls-bar" role="search">
-    <div class="search-box">
-      <span aria-hidden="true">🔍</span>
-      <input type="text" id="search-input" placeholder="Suche nach Titel, Jahr oder Genre…" aria-label="Filme durchsuchen">
-    </div>
-    <div class="filter-group">
-      <select class="select-input" id="filter-decade" aria-label="Nach Jahrzehnt filtern">
+  <section class="controls" aria-label="Filter und Suche">
+    <label class="search">
+      🔍
+      <input id="search" type="search" placeholder="Titel, Jahr oder Genre suchen …" autocomplete="off">
+    </label>
+
+    <div class="filters">
+      <select id="decade" class="select" aria-label="Jahrzehnt filtern">
         <option value="all">Alle Jahrzehnte</option>
         <option value="1980">1980er</option>
         <option value="1990">1990er</option>
@@ -398,764 +891,761 @@ nav{ display:flex; gap:.25rem; overflow-x:auto; }
         <option value="2010">2010er</option>
         <option value="2020">2020er</option>
       </select>
-      <select class="select-input" id="filter-rating" aria-label="Nach Bewertung filtern">
-        <option value="all">Alle Bewertungen</option>
-        <option value="top">Top-Filme (≥ 80)</option>
-        <option value="mid">Mittelmaß (60–79)</option>
-        <option value="flop">Flops (&lt; 60)</option>
-        <option value="unrated">Noch unbewertet</option>
-      </select>
-      <select class="select-input" id="sort-by" aria-label="Sortierung">
-        <option value="year-desc">Jahr (Neueste zuerst)</option>
-        <option value="year-asc">Jahr (Älteste zuerst)</option>
-        <option value="avg-desc">Unser Ø (Höchste)</option>
-        <option value="rt-desc">Rotten Tomatoes (Höchste)</option>
-        <option value="title-asc">Titel (A–Z)</option>
-      </select>
-      <button class="icon-btn" id="view-toggle-btn" onclick="toggleOverviewMode()" aria-label="Ansicht wechseln" title="Tabelle/Raster">📋 Tabelle</button>
-    </div>
-  </div>
 
-  <section id="view-overview" class="view-section active">
-    <div id="grid-container" class="movies-grid"></div>
-    <div id="table-container" class="table-responsive" style="display:none;">
-      <table class="movies-table">
+      <select id="rating" class="select" aria-label="Bewertung filtern">
+        <option value="all">Alle Bewertungen</option>
+        <option value="top">Top-Filme ≥ 80</option>
+        <option value="mid">Solide 60–79</option>
+        <option value="low">Unter 60</option>
+        <option value="unrated">Unbewertet</option>
+      </select>
+
+      <select id="sort" class="select" aria-label="Sortieren">
+        <option value="year-desc">Jahr neu zuerst</option>
+        <option value="year-asc">Jahr alt zuerst</option>
+        <option value="avg-desc">Unser Ø hoch</option>
+        <option value="avg-asc">Unser Ø niedrig</option>
+        <option value="title-asc">Titel A–Z</option>
+        <option value="rtCritics-desc">RT Critics hoch</option>
+      </select>
+
+      <button class="pill-btn" id="modeBtn">📋 Tabelle</button>
+    </div>
+  </section>
+
+  <section id="view-overview" class="view active">
+    <div id="grid" class="grid"></div>
+
+    <div id="tableWrap" class="table-wrap hidden">
+      <table>
         <thead>
           <tr>
-            <th onclick="sortData('year')">Jahr ↕</th>
-            <th onclick="sortData('title')">Titel ↕</th>
+            <th data-sort-col="year">Jahr</th>
+            <th data-sort-col="title">Titel</th>
             <th>Genre</th>
-            <th onclick="sortData('t')">Tristan ↕</th>
-            <th onclick="sortData('v')">Vincent ↕</th>
-            <th onclick="sortData('a')">Unser Ø ↕</th>
-            <th onclick="sortData('rc')">RT Critics ↕</th>
-            <th onclick="sortData('ra')">RT Audience ↕</th>
-            <th onclick="sortData('im')">IMDb ↕</th>
+            <th data-sort-col="tristan">Tristan</th>
+            <th data-sort-col="vincent">Vincent</th>
+            <th data-sort-col="avg">Unser Ø</th>
+            <th data-sort-col="rtCritics">RT Critics</th>
+            <th data-sort-col="rtAudience">RT Audience</th>
+            <th data-sort-col="imdb">IMDb</th>
           </tr>
         </thead>
-        <tbody id="table-body"></tbody>
+        <tbody id="tbody"></tbody>
       </table>
     </div>
   </section>
 
-  <section id="view-timeline" class="view-section">
-    <div class="timeline" id="timeline-container"></div>
+  <section id="view-timeline" class="view">
+    <div id="timeline" class="timeline"></div>
   </section>
 
-  <section id="view-gallery" class="view-section">
-    <div class="gallery-grid" id="gallery-container"></div>
+  <section id="view-gallery" class="view">
+    <div id="gallery" class="gallery"></div>
   </section>
 
-  <section id="view-compare" class="view-section">
-    <div class="controls-bar" style="justify-content:center;">
-      <select class="select-input" id="comp-select-1" onchange="renderComparison()"></select>
-      <span style="font-family:var(--font-mono); font-weight:700;">VS</span>
-      <select class="select-input" id="comp-select-2" onchange="renderComparison()"></select>
+  <section id="view-compare" class="view">
+    <section class="controls" style="grid-template-columns:1fr">
+      <div class="filters" style="justify-content:center">
+        <select id="compareA" class="select"></select>
+        <strong style="font-family:var(--font-mono);align-self:center">VS</strong>
+        <select id="compareB" class="select"></select>
+      </div>
+    </section>
+    <div id="compareGrid" class="compare-grid"></div>
+  </section>
+
+  <section id="view-stats" class="view">
+    <div id="statCards" class="stat-cards"></div>
+    <div class="charts">
+      <div class="chart-card"><canvas id="chartYears"></canvas></div>
+      <div class="chart-card"><canvas id="chartPeople"></canvas></div>
     </div>
-    <div class="compare-grid" id="compare-container"></div>
   </section>
-
-  <section id="view-stats" class="view-section">
-    <div class="stats-cards" id="stats-cards-container"></div>
-    <div class="charts-grid">
-      <div class="chart-container"><canvas id="chart-timeline"></canvas></div>
-      <div class="chart-container"><canvas id="chart-compare"></canvas></div>
-      <div class="chart-container"><canvas id="chart-decades"></canvas></div>
-    </div>
-  </section>
-
 </main>
 
-<button class="fab" onclick="showSurpriseMovie()" aria-label="Zufälligen Film anzeigen">🎲 Überraschungsfilm</button>
-<div class="timecode" id="timecode" aria-hidden="true">00:00:00:00</div>
+<button class="fab" id="surpriseBtn">🎲 Überraschungsfilm</button>
+<div class="timecode" id="timecode">00:00:00:00</div>
 
-<div class="modal-overlay" id="movie-modal" role="dialog" aria-modal="true" tabindex="-1">
-  <div class="modal">
-    <img src="" alt="" class="modal-poster" id="modal-img">
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+  <article class="modal">
+    <img id="modalImg" class="modal-img" src="" alt="">
     <div class="modal-body">
-      <div>
-        <div style="display:flex; justify-content:space-between; align-items:start;">
-          <span id="modal-year" class="logo-badge" style="margin-bottom:.5rem; display:inline-block;"></span>
-          <span class="modal-close" onclick="closeModal()" aria-label="Schließen">✕</span>
-        </div>
-        <h2 id="modal-title" style="font-family:var(--font-display); font-size:1.8rem; letter-spacing:.02em; margin-bottom:.15rem;"></h2>
-        <p id="modal-title-de" style="color:var(--parchment-dim); font-size:.82rem; margin-bottom:1rem;"></p>
-        <p id="modal-genre" style="font-size:.82rem; color:var(--parchment-dim); margin-bottom:1.2rem; font-family:var(--font-mono);"></p>
+      <div class="modal-top">
+        <span id="modalYear" class="badge"></span>
+        <button class="close" id="closeModal" aria-label="Modal schließen">✕</button>
+      </div>
 
-        <div class="rating-panel">
-          <h3>Bewertungs-Breakdown</h3>
-          <div class="rgrid">
-            <div>👤 Tristan: <strong id="modal-tristan"></strong></div>
-            <div>👤 Vincent: <strong id="modal-vincent"></strong></div>
-            <div class="full"><span>⭐ Unser Durchschnitt: </span><strong id="modal-avg" style="font-size:1.1rem;"></strong></div>
-            <div>🍅 RT Critics: <strong id="modal-rc"></strong></div>
-            <div>🍿 RT Audience: <strong id="modal-ra"></strong></div>
-            <div>🎬 IMDb: <strong id="modal-imdb"></strong></div>
-          </div>
+      <h2 id="modalTitle"></h2>
+      <p id="modalDe" class="meta"></p>
+      <p id="modalGenre" class="meta" style="margin-top:.35rem"></p>
+
+      <div class="rating-box">
+        <div class="rating-grid">
+          <div>👤 Tristan<br><strong id="modalT"></strong></div>
+          <div>👤 Vincent<br><strong id="modalV"></strong></div>
+          <div class="full">⭐ Unser Durchschnitt<br><strong id="modalAvg" style="font-size:1.35rem"></strong></div>
+          <div>🍅 RT Critics<br><strong id="modalRC"></strong></div>
+          <div>🍿 RT Audience<br><strong id="modalRA"></strong></div>
+          <div class="full">🎬 IMDb<br><strong id="modalIM"></strong></div>
         </div>
       </div>
-      <div style="display:flex; gap:1rem; justify-content:flex-end;">
-        <button id="btn-modal-again" class="select-input" style="display:none; background:var(--marquee-red); color:#fff;" onclick="showSurpriseMovie()">Nochmal 🎲</button>
-        <button class="select-input" onclick="closeModal()">Zurück zur Übersicht</button>
+
+      <div class="modal-actions">
+        <button class="pill-btn" id="againBtn">Nochmal würfeln 🎲</button>
+        <button class="pill-btn" id="backBtn">Zurück</button>
       </div>
     </div>
-  </div>
+  </article>
 </div>
 
 <script>
-/* =========================================================
-   DATENQUELLE
-   ---------------------------------------------------------
-   Trag hier den Link zu einer als CSV veröffentlichten
-   Google-Sheets-Tabelle ein (siehe Anleitung im Chat).
-   Leer lassen = die eingebetteten Daten unten werden benutzt.
-   Spalten (Reihenfolge egal, Namen müssen nur erkennbar sein):
-   Jahr | Originaltitel | Deutscher Titel | Genre |
-   Tristans Wertung | Vincent Wertung | Unser Durchschnitt |
-   RottenTomatoes Critics | RottenTomatoes Audience |
-   IMDb Score | Link zum Filmplakat/Cover
-   ========================================================= */
-const DATA_URL = ""; // z.B. "https://raw.githubusercontent.com/sl3ndrr/nicolascage-Chronologie-/9bce2faecde86b74cc85cf1a01e6319358b1c630/cage_movies.tsv"
+const DATA_URL = "";
 
-/* Eingebettete Fallback-Daten (Kurzschlüssel: y=Jahr, o=Originaltitel,
-   d=Deutscher Titel, g=Genre, t=Tristan, v=Vincent, a=Unser Ø,
-   rc=RT Critics, ra=RT Audience, im=IMDb, p=Poster-URL) */
-const FALLBACK_MOVIES = [
-{y:1982,o:"Fast Times at Ridgemont High",d:"Ich glaub’, ich steh’ im Wald",g:"Coming-of-Age, Komödie",t:null,v:78.0,a:80.0,rc:null,ra:null,im:7.1,p:"https://media.netflixreleases.com/images/def6d95e5715daa1961f125a9e9a44fb/fast-times-at-ridgemmont-high-1982-poster.jpg"},
-{y:1983,o:"Rumble Fish",d:"",g:"Drama",t:null,v:null,a:null,rc:75.0,ra:83.0,im:7.1,p:""},
-{y:1983,o:"Valley Girl",d:"– Das Mädchen aus dem Tal",g:"Coming-of-Age",t:null,v:null,a:null,rc:83.0,ra:57.0,im:6.4,p:""},
-{y:1984,o:"Birdy",d:"",g:"Drama",t:null,v:null,a:null,rc:84.0,ra:86.0,im:7.2,p:""},
-{y:1984,o:"Racing with the Moon",d:"Die Zeit verrinnt, die Navy ruft",g:"Drama",t:null,v:null,a:null,rc:60.0,ra:52.0,im:6.6,p:""},
-{y:1984,o:"Cotton Club",d:"",g:"Drama, Musik",t:null,v:null,a:null,rc:74.0,ra:56.0,im:6.5,p:""},
-{y:1986,o:"Peggy Sue Got Married",d:"Peggy Sue hat geheiratet",g:"Fantasy, Komödie",t:null,v:null,a:null,rc:87.0,ra:56.0,im:6.4,p:""},
-{y:1986,o:"The Boy in Blue",d:"Finish – Endspurt bis zum Sieg",g:"Sportfilm",t:null,v:null,a:null,rc:20.0,ra:36.0,im:5.6,p:""},
-{y:1986,o:"Moonstruck",d:"Mondsüchtig",g:"Romantik, Komödie",t:null,v:null,a:null,rc:92.0,ra:80.0,im:7.1,p:""},
-{y:1987,o:"Raising Arizona",d:"Arizona Junior",g:"Krimi, Komödie",t:null,v:null,a:null,rc:90.0,ra:85.0,im:7.3,p:""},
-{y:1989,o:"Vampire's Kiss",d:"",g:"Krimi, Komödie",t:null,v:null,a:null,rc:65.0,ra:60.0,im:6.1,p:""},
-{y:1990,o:"Fire Birds",d:"– Wings of the Apache",g:"Action, Krieg",t:null,v:null,a:null,rc:10.0,ra:23.0,im:4.8,p:""},
-{y:1990,o:"Time to Kill",d:"Zeit zu leben, Zeit zu sterben",g:"Krimi, Drama",t:70.0,v:60.0,a:65.0,rc:22.0,ra:33.0,im:5.2,p:""},
-{y:1990,o:"Wild at Heart",d:"– Die Geschichte von Sailor und Lula",g:"Drama, Krimi",t:null,v:null,a:null,rc:69.0,ra:79.0,im:7.2,p:""},
-{y:1991,o:"Zandalee",d:"– Das sechste Gebot",g:"Drama",t:null,v:null,a:null,rc:33.0,ra:25.0,im:4.4,p:""},
-{y:1992,o:"Honeymoon in Vegas",d:"- aber nicht mit meiner Braut",g:"Komödie",t:null,v:null,a:null,rc:66.0,ra:37.0,im:5.8,p:""},
-{y:1993,o:"Amos & Andrew",d:"– Zwei fast perfekte Chaoten",g:"Komödie",t:null,v:null,a:null,rc:17.0,ra:30.0,im:5.6,p:""},
-{y:1993,o:"Deadfall",d:"",g:"Krimi, Thriller",t:null,v:null,a:null,rc:34.0,ra:37.0,im:3.5,p:""},
-{y:1993,o:"Red Rock West",d:"",g:"Krimi, Thriller",t:null,v:null,a:null,rc:97.0,ra:75.0,im:7.0,p:""},
-{y:1994,o:"Guarding Tess",d:"Tess und ihr Bodyguard",g:"Action, Komödie",t:null,v:null,a:null,rc:57.0,ra:40.0,im:5.8,p:""},
-{y:1994,o:"It Could Happen to You",d:"2 Millionen Dollar Trinkgeld",g:"Romantik, Komödie",t:null,v:null,a:null,rc:71.0,ra:59.0,im:6.4,p:""},
-{y:1994,o:"Trapped in Paradise",d:"Schneesturm im Paradies",g:"Komödie",t:null,v:null,a:null,rc:10.0,ra:45.0,im:5.9,p:""},
-{y:1995,o:"Kiss of Death",d:"",g:"Krimi, Thriller",t:null,v:null,a:null,rc:68.0,ra:33.0,im:5.9,p:""},
-{y:1995,o:"Leaving Las Vegas",d:"",g:"Drama",t:null,v:null,a:null,rc:91.0,ra:85.0,im:7.5,p:""},
-{y:1996,o:"The Rock",d:"– Fels der Entscheidung",g:"Action",t:84.0,v:80.0,a:82.0,rc:67.0,ra:85.0,im:7.4,p:""},
-{y:1997,o:"Con Air",d:"",g:"Action",t:72.0,v:72.0,a:58.0,rc:75.0,ra:null,im:6.9,p:""},
-{y:1997,o:"Face/Off",d:"Im Körper des Feindes",g:"Action, Thriller",t:82.0,v:82.0,a:93.0,rc:82.0,ra:null,im:7.3,p:""},
-{y:1998,o:"City of Angels",d:"Stadt der Engel",g:"Romantik, Fantasy",t:null,v:null,a:null,rc:57.0,ra:82.0,im:6.7,p:""},
-{y:1998,o:"Snake Eyes",d:"Spiel auf Zeit",g:"Action, Krimi",t:95.0,v:95.0,a:95.0,rc:42.0,ra:37.0,im:6.1,p:""},
-{y:1999,o:"8mm",d:"– Acht Millimeter",g:"Krimi, Thriller",t:80.0,v:85.0,a:83.0,rc:23.0,ra:59.0,im:6.6,p:""},
-{y:1999,o:"Bringing Out the Dead",d:"– Nächte der Erinnerung",g:"Drama",t:null,v:null,a:null,rc:73.0,ra:66.0,im:6.8,p:""},
-{y:2000,o:"Gone in 60 Seconds",d:"Nur noch 60 Sekunden",g:"Action",t:75.0,v:72.0,a:74.0,rc:25.0,ra:77.0,im:6.5,p:""},
-{y:2000,o:"The Family Man",d:"Family Man",g:"Romantik, Komödie",t:null,v:null,a:null,rc:53.0,ra:68.0,im:6.8,p:""},
-{y:2001,o:"Captain Corelli's Mandolin",d:"Corellis Mandoline",g:"Krieg, Romantik",t:null,v:null,a:null,rc:28.0,ra:50.0,im:5.9,p:""},
-{y:2001,o:"Christmas Carol: The Movie",d:"Ein Weihnachtsmärchen",g:"Familie, Fantasy",t:null,v:null,a:null,rc:13.0,ra:29.0,im:5.3,p:""},
-{y:2002,o:"Adaptation",d:"– Der Orchideen-Dieb",g:"Komödie, Drama",t:null,v:null,a:null,rc:90.0,ra:84.0,im:7.7,p:""},
-{y:2002,o:"Sonny",d:"",g:"Drama",t:null,v:null,a:null,rc:21.0,ra:45.0,im:5.5,p:""},
-{y:2002,o:"Windtalkers",d:"",g:"Krieg, Action",t:null,v:null,a:null,rc:33.0,ra:50.0,im:6.1,p:""},
-{y:2003,o:"Matchstick Men",d:"Tricks",g:"Krimi, Komödie",t:null,v:null,a:null,rc:82.0,ra:73.0,im:7.3,p:""},
-{y:2004,o:"National Treasure",d:"Das Vermächtnis der Tempelritter",g:"Abenteuer, Action",t:62.0,v:65.0,a:64.0,rc:46.0,ra:76.0,im:6.9,p:""},
-{y:2005,o:"Lord of War",d:"– Händler des Todes",g:"Krimi, Drama",t:90.0,v:90.0,a:62.0,rc:84.0,ra:null,im:7.6,p:""},
-{y:2005,o:"The Weather Man",d:"",g:"Komödie, Drama",t:null,v:null,a:null,rc:60.0,ra:58.0,im:6.6,p:""},
-{y:2006,o:"The Ant Bully",d:"Lucas, der Ameisenschreck",g:"Animation, Familie",t:null,v:null,a:null,rc:62.0,ra:43.0,im:5.9,p:""},
-{y:2006,o:"The Wicker Man",d:"– Ritual des Bösen",g:"Horror, Thriller",t:35.0,v:35.0,a:15.0,rc:17.0,ra:null,im:3.8,p:""},
-{y:2006,o:"World Trade Center",d:"",g:"Drama, Historie",t:40.0,v:61.0,a:51.0,rc:66.0,ra:62.0,im:6.0,p:""},
-{y:2007,o:"Ghost Rider",d:"",g:"Action, Fantasy",t:73.0,v:69.0,a:71.0,rc:27.0,ra:48.0,im:5.3,p:""},
-{y:2007,o:"National Treasure: Book of Secrets",d:"Das Vermächtnis des geheimen Buches",g:"Abenteuer, Action",t:76.0,v:75.0,a:76.0,rc:36.0,ra:67.0,im:6.5,p:""},
-{y:2007,o:"Next",d:"",g:"Sci-Fi, Action",t:null,v:null,a:null,rc:28.0,ra:57.0,im:6.2,p:""},
-{y:2008,o:"Bangkok Dangerous",d:"",g:"Action, Thriller",t:null,v:null,a:null,rc:8.0,ra:24.0,im:5.3,p:""},
-{y:2009,o:"Astro Boy",d:"– Der Film",g:"Animation, Sci-Fi",t:null,v:null,a:null,rc:50.0,ra:50.0,im:6.2,p:""},
-{y:2009,o:"Bad Lieutenant: Port of Call New Orleans",d:"– Cop ohne Gewissen",g:"Krimi, Drama",t:null,v:null,a:null,rc:86.0,ra:58.0,im:6.6,p:""},
-{y:2009,o:"G-Force",d:"– Agenten mit Biss",g:"Animation, Komödie",t:69.0,v:69.0,a:22.0,rc:38.0,ra:null,im:5.1,p:""},
-{y:2009,o:"Knowing",d:"– Die Zukunft endet jetzt",g:"Sci-Fi, Thriller",t:null,v:null,a:null,rc:34.0,ra:48.0,im:6.2,p:""},
-{y:2010,o:"Kick-Ass",d:"",g:"Action, Komödie",t:88.0,v:88.0,a:77.0,rc:81.0,ra:null,im:7.6,p:""},
-{y:2010,o:"The Sorcerer's Apprentice",d:"Duell der Magier",g:"Fantasy, Action",t:65.0,v:59.0,a:62.0,rc:40.0,ra:53.0,im:6.1,p:""},
-{y:2011,o:"Drive Angry",d:"",g:"Action, Fantasy",t:null,v:null,a:null,rc:47.0,ra:35.0,im:5.4,p:""},
-{y:2011,o:"Ghost Rider: Spirit of Vengeance",d:"",g:"Action, Fantasy",t:null,v:null,a:null,rc:49.0,ra:49.0,im:null,p:""},
-{y:2011,o:"Seeking Justice",d:"Pakt der Rache",g:"Thriller, Krimi",t:null,v:null,a:null,rc:28.0,ra:36.0,im:6.1,p:""},
-{y:2011,o:"Season of the Witch",d:"Der letzte Tempelritter",g:"Fantasy, Action",t:52.0,v:57.0,a:55.0,rc:11.0,ra:29.0,im:5.4,p:""},
-{y:2011,o:"Trespass",d:"",g:"Thriller, Action",t:null,v:null,a:null,rc:10.0,ra:22.0,im:5.3,p:""},
-{y:2011,o:"Stolen",d:"",g:"Action, Thriller",t:69.0,v:69.0,a:69.0,rc:20.0,ra:33.0,im:5.5,p:""},
-{y:2012,o:"Joe",d:"– Die Rache ist sein",g:"Drama",t:null,v:null,a:null,rc:86.0,ra:64.0,im:6.9,p:""},
-{y:2013,o:"The Croods",d:"Die Croods",g:"Animation, Familie",t:null,v:null,a:null,rc:72.0,ra:77.0,im:7.2,p:""},
-{y:2013,o:"The Frozen Ground",d:"Frozen Ground",g:"Krimi, Thriller",t:50.0,v:50.0,a:61.0,rc:53.0,ra:null,im:6.4,p:""},
-{y:2014,o:"Dying of the Light",d:"– Jede Minute zählt",g:"Action, Thriller",t:20.0,v:20.0,a:20.0,rc:10.0,ra:23.0,im:4.4,p:""},
-{y:2014,o:"Left Behind",d:"",g:"Thriller, Drama",t:12.0,v:51.0,a:32.0,rc:0.0,ra:57.0,im:3.1,p:""},
-{y:2014,o:"Outcast",d:"– Die letzten Tempelritter",g:"Action, Abenteuer",t:null,v:null,a:null,rc:4.0,ra:25.0,im:4.6,p:""},
-{y:2014,o:"Tokarev",d:"– Die Vergangenheit stirbt niemals",g:"Krimi, Thriller",t:null,v:null,a:null,rc:12.0,ra:21.0,im:5.0,p:""},
-{y:2015,o:"Pay the Ghost",d:"",g:"Thriller, Horror",t:null,v:null,a:null,rc:10.0,ra:27.0,im:5.2,p:""},
-{y:2015,o:"The Runner",d:"Der Kandidat – Macht hat ihren Preis",g:"Drama, Thriller",t:null,v:null,a:null,rc:24.0,ra:23.0,im:4.7,p:""},
-{y:2016,o:"Army of One",d:"",g:"Action, Thriller",t:90.0,v:73.0,a:82.0,rc:25.0,ra:28.0,im:5.0,p:""},
-{y:2016,o:"Dog Eat Dog",d:"",g:"Krimi, Drama",t:null,v:null,a:null,rc:49.0,ra:20.0,im:4.8,p:""},
-{y:2016,o:"Snowden",d:"",g:"Biopic, Drama",t:null,v:null,a:null,rc:75.0,ra:75.0,im:null,p:""},
-{y:2016,o:"The Trust",d:"",g:"Krimi, Thriller",t:55.0,v:62.0,a:59.0,rc:63.0,ra:41.0,im:5.4,p:""},
-{y:2016,o:"USS Indianapolis: Men of Courage",d:"",g:"Krieg, Drama",t:null,v:null,a:null,rc:17.0,ra:30.0,im:5.3,p:""},
-{y:2017,o:"Arsenal",d:"",g:"Action, Krimi",t:null,v:null,a:null,rc:3.0,ra:18.0,im:4.0,p:""},
-{y:2017,o:"Inconceivable",d:"Tödliches Verlangen",g:"Thriller, Krimi",t:null,v:null,a:null,rc:31.0,ra:32.0,im:5.2,p:""},
-{y:2017,o:"Mom and Dad",d:"",g:"Horror, Komödie",t:65.0,v:65.0,a:65.0,rc:75.0,ra:46.0,im:5.6,p:""},
-{y:2017,o:"The Humanity Bureau",d:"– Flucht aus New America",g:"Sci-Fi, Drama",t:null,v:null,a:null,rc:25.0,ra:24.0,im:4.6,p:""},
-{y:2017,o:"Vengeance: A Love Story",d:"– Pfad der Vergeltung",g:"Krimi, Thriller",t:null,v:null,a:null,rc:24.0,ra:null,im:5.2,p:""},
-{y:2018,o:"211",d:"– Cops under Fire",g:"Action, Krimi",t:null,v:null,a:null,rc:4.0,ra:10.0,im:4.4,p:""},
-{y:2018,o:"Between Worlds",d:"",g:"Sci-Fi, Thriller",t:29.0,v:39.0,a:34.0,rc:33.0,ra:35.0,im:4.3,p:""},
-{y:2018,o:"Looking Glass",d:"Willkommen im Motor Way Motel",g:"Thriller, Mystery",t:null,v:null,a:null,rc:17.0,ra:17.0,im:4.6,p:""},
-{y:2018,o:"Mandy",d:"",g:"Horror, Action",t:null,v:null,a:null,rc:98.0,ra:97.0,im:null,p:""},
-{y:2018,o:"Spider-Man: Into the Spider-Verse",d:"Spider-Man: A New Universe",g:"Animation, Action",t:95.0,v:95.0,a:97.0,rc:94.0,ra:null,im:8.4,p:""},
-{y:2018,o:"Teen Titans Go! To the Movies",d:"",g:"Animation, Komödie",t:null,v:null,a:null,rc:91.0,ra:72.0,im:6.7,p:""},
-{y:2019,o:"A Score to Settle",d:"",g:"Action, Krimi",t:40.0,v:57.0,a:49.0,rc:15.0,ra:24.0,im:4.7,p:""},
-{y:2019,o:"Color Out of Space",d:"Die Farbe aus dem All",g:"Horror, Sci-Fi",t:null,v:null,a:null,rc:86.0,ra:76.0,im:6.2,p:""},
-{y:2019,o:"Grand Isle",d:"– Mörderische Falle",g:"Thriller, Krimi",t:null,v:null,a:null,rc:9.0,ra:39.0,im:4.6,p:""},
-{y:2019,o:"Kill Chain",d:"",g:"Action, Thriller",t:null,v:null,a:null,rc:39.0,ra:null,im:5.0,p:""},
-{y:2019,o:"Primal",d:"– Die Jagd ist eröffnet",g:"Action, Thriller",t:42.0,v:57.0,a:50.0,rc:37.0,ra:26.0,im:4.9,p:""},
-{y:2019,o:"Running with the Devil",d:"",g:"Thriller, Drama",t:28.0,v:15.0,a:22.0,rc:24.0,ra:38.0,im:5.5,p:""},
-{y:2020,o:"Jiu Jitsu",d:"",g:"Action, Thriller",t:null,v:null,a:null,rc:5.0,ra:5.0,im:null,p:""},
-{y:2020,o:"The Croods: A New Age",d:"Die Croods – Alles auf Anfang",g:"Animation, Familie",t:null,v:null,a:null,rc:77.0,ra:94.0,im:6.9,p:""},
-{y:2021,o:"Pig",d:"",g:"Drama",t:75.0,v:81.0,a:78.0,rc:97.0,ra:84.0,im:6.9,p:""},
-{y:2021,o:"Prisoners of the Ghostland",d:"",g:"Sci-Fi, Thriller",t:null,v:null,a:null,rc:62.0,ra:25.0,im:4.2,p:""},
-{y:2021,o:"Willy's Wonderland",d:"",g:"Horror, Komödie",t:null,v:null,a:null,rc:40.0,ra:40.0,im:null,p:""},
-{y:2022,o:"Butcher's Crossing",d:"",g:"Western, Drama",t:null,v:null,a:null,rc:74.0,ra:62.0,im:5.7,p:""},
-{y:2022,o:"The Unbearable Weight of Massive Talent",d:"Massive Talent",g:"Action, Komödie",t:70.0,v:70.0,a:87.0,rc:87.0,ra:null,im:7.0,p:""},
-{y:2023,o:"Dream Scenario",d:"",g:"Komödie, Fantasy",t:null,v:null,a:null,rc:78.0,ra:78.0,im:null,p:""},
-{y:2023,o:"Renfield",d:"",g:"Komödie, Horror",t:null,v:null,a:null,rc:83.0,ra:83.0,im:null,p:""},
-{y:2023,o:"Sympathy for the Devil",d:"",g:"Krimi, Thriller",t:null,v:null,a:null,rc:60.0,ra:48.0,im:5.5,p:""},
-{y:2023,o:"The Old Way",d:"",g:"Western",t:null,v:null,a:null,rc:33.0,ra:70.0,im:5.6,p:""},
-{y:2023,o:"The Retirement Plan",d:"",g:"Action, Komödie",t:null,v:null,a:null,rc:60.0,ra:40.0,im:5.1,p:""},
-{y:2024,o:"Longlegs",d:"",g:"Horror, Thriller",t:null,v:null,a:null,rc:65.0,ra:65.0,im:null,p:""},
-{y:2024,o:"Arcadian",d:"",g:"Sci-Fi, Horror",t:null,v:null,a:null,rc:78.0,ra:56.0,im:5.5,p:""},
-{y:2024,o:"The Surfer",d:"",g:"Thriller, Drama",t:null,v:null,a:null,rc:84.0,ra:47.0,im:5.6,p:""},
-{y:2025,o:"The Carpenter's Son",d:"",g:"Drama",t:null,v:null,a:null,rc:null,ra:null,im:null,p:""},
-{y:2025,o:"Gunslingers",d:"",g:"Action, Western",t:null,v:null,a:null,rc:null,ra:null,im:null,p:""}
-];
+const EMBEDDED_DATA = `y	o	d	g	t	v	a	rc	ra	im	p
+1982	Fast Times at Ridgemont High	Ich glaub’, ich steh’ im Wald	Coming-of-Age, Komödie		78	80			7.1	https://media.netflixreleases.com/images/def6d95e5715daa1961f125a9e9a44fb/fast-times-at-ridgemmont-high-1982-poster.jpg
+1983	Rumble Fish		Drama				75	83	7.1	
+1983	Valley Girl	– Das Mädchen aus dem Tal	Coming-of-Age				83	57	6.4	
+1984	Birdy		Drama				84	86	7.2	
+1984	Racing with the Moon	Die Zeit verrinnt, die Navy ruft	Drama				60	52	6.6	
+1984	Cotton Club		Drama, Musik				74	56	6.5	
+1986	Peggy Sue Got Married	Peggy Sue hat geheiratet	Fantasy, Komödie				87	56	6.4	
+1986	The Boy in Blue	Finish – Endspurt bis zum Sieg	Sportfilm				20	36	5.6	
+1986	Moonstruck	Mondsüchtig	Romantik, Komödie				92	80	7.1	
+1987	Raising Arizona	Arizona Junior	Krimi, Komödie				90	85	7.3	
+1989	Vampire's Kiss		Krimi, Komödie				65	60	6.1	
+1990	Fire Birds	– Wings of the Apache	Action, Krieg				10	23	4.8	
+1990	Time to Kill	Zeit zu leben, Zeit zu sterben	Krimi, Drama	70	60	65	22	33	5.2	
+1990	Wild at Heart	– Die Geschichte von Sailor und Lula	Drama, Krimi				69	79	7.2	
+1991	Zandalee	– Das sechste Gebot	Drama				33	25	4.4	
+1992	Honeymoon in Vegas	- aber nicht mit meiner Braut	Komödie				66	37	5.8	
+1993	Amos & Andrew	– Zwei fast perfekte Chaoten	Komödie				17	30	5.6	
+1993	Deadfall		Krimi, Thriller				34	37	3.5	
+1993	Red Rock West		Krimi, Thriller				97	75	7	
+1994	Guarding Tess	Tess und ihr Bodyguard	Action, Komödie				57	40	5.8	
+1994	It Could Happen to You	2 Millionen Dollar Trinkgeld	Romantik, Komödie				71	59	6.4	
+1994	Trapped in Paradise	Schneesturm im Paradies	Komödie				10	45	5.9	
+1995	Kiss of Death		Krimi, Thriller				68	33	5.9	
+1995	Leaving Las Vegas		Drama				91	85	7.5	
+1996	The Rock	– Fels der Entscheidung	Action	84	80	82	67	85	7.4	
+1997	Con Air		Action	72	72	58	75		6.9	
+1997	Face/Off	Im Körper des Feindes	Action, Thriller	82	82	93	82		7.3	
+1998	City of Angels	Stadt der Engel	Romantik, Fantasy				57	82	6.7	
+1998	Snake Eyes	Spiel auf Zeit	Action, Krimi	95	95	95	42	37	6.1	
+1999	8mm	– Acht Millimeter	Krimi, Thriller	80	85	83	23	59	6.6	
+1999	Bringing Out the Dead	– Nächte der Erinnerung	Drama				73	66	6.8	
+2000	Gone in 60 Seconds	Nur noch 60 Sekunden	Action	75	72	74	25	77	6.5	
+2000	The Family Man	Family Man	Romantik, Komödie				53	68	6.8	
+2001	Captain Corelli's Mandolin	Corellis Mandoline	Krieg, Romantik				28	50	5.9	
+2001	Christmas Carol: The Movie	Ein Weihnachtsmärchen	Familie, Fantasy				13	29	5.3	
+2002	Adaptation	– Der Orchideen-Dieb	Komödie, Drama				90	84	7.7	
+2002	Sonny		Drama				21	45	5.5	
+2002	Windtalkers		Krieg, Action				33	50	6.1	
+2003	Matchstick Men	Tricks	Krimi, Komödie				82	73	7.3	
+2004	National Treasure	Das Vermächtnis der Tempelritter	Abenteuer, Action	62	65	64	46	76	6.9	
+2005	Lord of War	– Händler des Todes	Krimi, Drama	90	90	62	84		7.6	
+2005	The Weather Man		Komödie, Drama				60	58	6.6	
+2006	The Ant Bully	Lucas, der Ameisenschreck	Animation, Familie				62	43	5.9	
+2006	The Wicker Man	– Ritual des Bösen	Horror, Thriller	35	35	15	17		3.8	
+2006	World Trade Center		Drama, Historie	40	61	51	66	62	6	
+2007	Ghost Rider		Action, Fantasy	73	69	71	27	48	5.3	
+2007	National Treasure: Book of Secrets	Das Vermächtnis des geheimen Buches	Abenteuer, Action	76	75	76	36	67	6.5	
+2007	Next		Sci-Fi, Action				28	57	6.2	
+2008	Bangkok Dangerous		Action, Thriller				8	24	5.3	
+2009	Astro Boy	– Der Film	Animation, Sci-Fi				50	50	6.2	
+2009	Bad Lieutenant: Port of Call New Orleans	– Cop ohne Gewissen	Krimi, Drama				86	58	6.6	
+2009	G-Force	– Agenten mit Biss	Animation, Komödie	69	69	22	38		5.1	
+2009	Knowing	– Die Zukunft endet jetzt	Sci-Fi, Thriller				34	48	6.2	
+2010	Kick-Ass		Action, Komödie	88	88	77	81		7.6	
+2010	The Sorcerer's Apprentice	Duell der Magier	Fantasy, Action	65	59	62	40	53	6.1	
+2011	Drive Angry		Action, Fantasy				47	35	5.4	
+2011	Ghost Rider: Spirit of Vengeance		Action, Fantasy				49	49		
+2011	Seeking Justice	Pakt der Rache	Thriller, Krimi				28	36	6.1	
+2011	Season of the Witch	Der letzte Tempelritter	Fantasy, Action	52	57	55	11	29	5.4	
+2011	Trespass		Thriller, Action				10	22	5.3	
+2011	Stolen		Action, Thriller	69	69	69	20	33	5.5	
+2012	Joe	– Die Rache ist sein	Drama				86	64	6.9	
+2013	The Croods	Die Croods	Animation, Familie				72	77	7.2	
+2013	The Frozen Ground	Frozen Ground	Krimi, Thriller	50	50	61	53		6.4	
+2014	Dying of the Light	– Jede Minute zählt	Action, Thriller	20	20	20	10	23	4.4	
+2014	Left Behind		Thriller, Drama	12	51	32	0	57	3.1	
+2014	Outcast	– Die letzten Tempelritter	Action, Abenteuer				4	25	4.6	
+2014	Tokarev	– Die Vergangenheit stirbt niemals	Krimi, Thriller				12	21	5	
+2015	Pay the Ghost		Thriller, Horror				10	27	5.2	
+2015	The Runner	Der Kandidat – Macht hat ihren Preis	Drama, Thriller				24	23	4.7	
+2016	Army of One		Action, Thriller	90	73	82	25	28	5	
+2016	Dog Eat Dog		Krimi, Drama				49	20	4.8	
+2016	Snowden		Biopic, Drama				75	75		
+2016	The Trust		Krimi, Thriller	55	62	59	63	41	5.4	
+2016	USS Indianapolis: Men of Courage		Krieg, Drama				17	30	5.3	
+2017	Arsenal		Action, Krimi				3	18	4	
+2017	Inconceivable	Tödliches Verlangen	Thriller, Krimi				31	32	5.2	
+2017	Mom and Dad		Horror, Komödie	65	65	65	75	46	5.6	
+2017	The Humanity Bureau	– Flucht aus New America	Sci-Fi, Drama				25	24	4.6	
+2017	Vengeance: A Love Story	– Pfad der Vergeltung	Krimi, Thriller				24		5.2	
+2018	211	– Cops under Fire	Action, Krimi				4	10	4.4	
+2018	Between Worlds		Sci-Fi, Thriller	29	39	34	33	35	4.3	
+2018	Looking Glass	Willkommen im Motor Way Motel	Thriller, Mystery				17	17	4.6	
+2018	Mandy		Horror, Action				98	97		
+2018	Spider-Man: Into the Spider-Verse	Spider-Man: A New Universe	Animation, Action	95	95	97	94		8.4	
+2018	Teen Titans Go! To the Movies		Animation, Komödie				91	72	6.7	
+2019	A Score to Settle		Action, Krimi	40	57	49	15	24	4.7	
+2019	Color Out of Space	Die Farbe aus dem All	Horror, Sci-Fi				86	76	6.2	
+2019	Grand Isle	– Mörderische Falle	Thriller, Krimi				9	39	4.6	
+2019	Kill Chain		Action, Thriller				39		5	
+2019	Primal	– Die Jagd ist eröffnet	Action, Thriller	42	57	50	37	26	4.9	
+2019	Running with the Devil		Thriller, Drama	28	15	22	24	38	5.5	
+2020	Jiu Jitsu		Action, Thriller				5	5		
+2020	The Croods: A New Age	Die Croods – Alles auf Anfang	Animation, Familie				77	94	6.9	
+2021	Pig		Drama	75	81	78	97	84	6.9	
+2021	Prisoners of the Ghostland		Sci-Fi, Thriller				62	25	4.2	
+2021	Willy's Wonderland		Horror, Komödie				40	40		
+2022	Butcher's Crossing		Western, Drama				74	62	5.7	
+2022	The Unbearable Weight of Massive Talent	Massive Talent	Action, Komödie	70	70	87	87		7	
+2023	Dream Scenario		Komödie, Fantasy				78	78		
+2023	Renfield		Komödie, Horror				83	83		
+2023	Sympathy for the Devil		Krimi, Thriller				60	48	5.5	
+2023	The Old Way		Western				33	70	5.6	
+2023	The Retirement Plan		Action, Komödie				60	40	5.1	
+2024	Longlegs		Horror, Thriller				65	65		
+2024	Arcadian		Sci-Fi, Horror				78	56	5.5	
+2024	The Surfer		Thriller, Drama				84	47	5.6	
+2025	The Carpenter's Son		Drama							
+2025	Gunslingers		Action, Western							`;
 
 let movies = [];
-let isGridView = true;
-let chartInstances = {};
+let filtered = [];
+let gridMode = true;
+let charts = {};
+let lastSurprise = false;
 
-/* ---------- Header-Erkennung für flexible Google-Sheet-Spalten ---------- */
-function normKey(s){ return s.toLowerCase().replace(/[^a-z0-9]/g,''); }
-const HEADER_ALIASES = {
-  year:['jahr','year'],
-  titleOrig:['originaltitel','title','originaltitle'],
-  titleDe:['deutschertitel','germantitle'],
-  genre:['genre'],
-  tristan:['tristanswertung','tristan'],
-  vincent:['vincentwertung','vincent'],
-  ourAvg:['unserdurchschnitt','durchschnitt','avg','average'],
-  rtCritics:['rottentomatoescritics','rtcritics','rottentomatoesscore','rottentomatoes'],
-  rtAudience:['rottentomatoesaudience','rtaudience'],
-  imdb:['imdbscore','imdb'],
-  poster:['linkzumfilmplakatcover','poster','link','cover']
-};
-function mapHeaders(fields){
-  const map = {};
-  fields.forEach((f,i)=>{
-    const nk = normKey(f||'');
-    for(const key in HEADER_ALIASES){
-      if(HEADER_ALIASES[key].some(alias => nk === alias || nk.includes(alias))){
-        if(map[key] === undefined) map[key] = f;
-      }
-    }
-  });
-  return map;
+const $ = sel => document.querySelector(sel);
+const $$ = sel => [...document.querySelectorAll(sel)];
+
+function esc(s=""){
+  return String(s).replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
 }
 
-/* ---------- robuste Wert-Klassifizierung (heilt verrutschte Spalten) ---------- */
-function toPct(raw){
-  if(raw === undefined || raw === null) return null;
-  const t = String(raw).trim();
-  if(t === '' || t === '-' || t === '–') return null;
-  const n = parseFloat(t.replace('%','').replace(',','.'));
-  return isNaN(n) ? null : n;
-}
-function toDec10(raw){
-  if(raw === undefined || raw === null) return null;
-  const t = String(raw).trim();
-  if(t === '' || t === '-' || t === '–' || t.includes('%')) return null;
-  const n = parseFloat(t.replace(',','.'));
-  return (isNaN(n) || n < 0 || n > 10) ? null : n;
-}
-function classifyTail(rawFields){
-  // rawFields: [rtCriticsRaw, rtAudienceRaw, imdbRaw, posterRaw] in Rohform
-  let url = null;
-  const remaining = [];
-  rawFields.forEach(f=>{
-    const t = (f===undefined||f===null) ? '' : String(f).trim();
-    if(!t) return;
-    if(/^https?:\/\//.test(t)) url = t;
-    else remaining.push(t);
-  });
-  const percents = [];
-  const decimals = [];
-  remaining.forEach(t=>{
-    if(t.includes('%')){ const p = toPct(t); if(p!==null) percents.push(p); }
-    else { const d = toDec10(t); if(d!==null) decimals.push(d); else { const p = toPct(t); if(p!==null) percents.push(p); } }
-  });
-  return {
-    rtCritics: percents.length>=1 ? percents[0] : null,
-    rtAudience: percents.length>=2 ? percents[1] : null,
-    imdb: decimals.length ? decimals[0] : null,
-    poster: url || ''
-  };
+function num(v){
+  if(v === undefined || v === null) return null;
+  const s = String(v).trim().replace(",",".");
+  if(!s) return null;
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : null;
 }
 
-/* ---------- Init & Datenladen ---------- */
-async function init(){
-  if(DATA_URL && DATA_URL.trim() !== ''){
+function parseTSV(text){
+  const rows = text.trim().split(/\r?\n/).map(r => r.split("\t"));
+  const header = rows.shift();
+  return rows.map((r,i)=>{
+    while(r.length < header.length) r.push("");
+    const o = Object.fromEntries(header.map((h,idx)=>[h,r[idx] ?? ""]));
+    return {
+      id:i,
+      year:parseInt(o.y,10),
+      title:o.o || "Unbekannt",
+      de:o.d || "",
+      genre:o.g || "",
+      tristan:num(o.t),
+      vincent:num(o.v),
+      avg:num(o.a),
+      rtCritics:num(o.rc),
+      rtAudience:num(o.ra),
+      imdb:num(o.im),
+      poster:o.p || ""
+    };
+  }).filter(m => m.year && m.title);
+}
+
+async function loadData(){
+  if(DATA_URL.trim()){
     try{
       const res = await fetch(DATA_URL);
-      if(!res.ok) throw new Error('Netzwerkfehler ' + res.status);
-      const text = await res.text();
-      const parsed = Papa.parse(text, { header:true, skipEmptyLines:true });
-      const hmap = mapHeaders(parsed.meta.fields || []);
-      movies = parsed.data.map((row,idx)=>buildMovie(row, hmap, idx)).filter(m=>m && m.year>0);
-      if(!movies.length) throw new Error('Keine Zeilen gefunden');
-    }catch(err){
-      console.warn('Externe Datenquelle nicht ladbar, nutze eingebettete Daten.', err);
-      movies = FALLBACK_MOVIES.map(buildFromEmbedded);
+      if(!res.ok) throw new Error(res.status);
+      movies = parseTSV(await res.text());
+      return;
+    }catch(e){
+      console.warn("Externe Daten konnten nicht geladen werden. Nutze eingebettete Daten.", e);
     }
-  }else{
-    movies = FALLBACK_MOVIES.map(buildFromEmbedded);
   }
-  setupEventListeners();
-  animateHeroTitle();
-  renderAll();
+  movies = parseTSV(EMBEDDED_DATA);
 }
 
-function buildFromEmbedded(m, idx){
-  return {
-    id: idx, year:m.y, titleOrig:m.o, titleDe:m.d, genre:m.g,
-    tristan:m.t, vincent:m.v, avg:m.a, rtCritics:m.rc, rtAudience:m.ra, imdb:m.im, poster:m.p
-  };
+function fmt(v,suffix=""){
+  return v === null || v === undefined ? "–" : `${Number.isInteger(v) ? v : v.toFixed(1)}${suffix}`;
 }
 
-function buildMovie(row, hmap, idx){
-  const get = key => hmap[key] !== undefined ? row[hmap[key]] : undefined;
-  const year = parseInt(String(get('year')||'').trim(), 10);
-  if(!year) return null;
-  const tail = classifyTail([get('rtCritics'), get('rtAudience'), get('imdb'), get('poster')]);
-  const tristan = toPct(get('tristan'));
-  const vincent = toPct(get('vincent'));
-  let avg = toPct(get('ourAvg'));
-  if(avg === null && (tristan!==null || vincent!==null)){
-    const vals = [tristan, vincent].filter(v=>v!==null);
-    avg = Math.round((vals.reduce((a,b)=>a+b,0)/vals.length)*10)/10;
-  }
-  return {
-    id: idx, year,
-    titleOrig: (get('titleOrig')||'Unbekannt').trim(),
-    titleDe: (get('titleDe')||'').trim(),
-    genre: (get('genre')||'').trim(),
-    tristan, vincent, avg,
-    rtCritics: tail.rtCritics, rtAudience: tail.rtAudience, imdb: tail.imdb,
-    poster: tail.poster || (get('poster')||'').trim()
-  };
+function cls(v,max=100){
+  if(v === null || v === undefined) return "none";
+  const r = v / max;
+  if(r >= .8) return "good";
+  if(r >= .6) return "mid";
+  return "low";
 }
 
-/* ---------- Hero-Titel Buchstaben-Animation ---------- */
-function animateHeroTitle(){
+function hue(str){
+  let h = 0;
+  str = (str || "cage").toLowerCase();
+  for(let i=0;i<str.length;i++) h = (h * 31 + str.charCodeAt(i)) % 360;
+  return h;
+}
+
+function fallback(id){
+  const m = movies.find(x=>x.id === id) || {};
+  const h = hue(m.genre || m.title);
+  const title = esc(m.title || "Nicolas Cage");
+  const year = esc(m.year || "");
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="hsl(${h},42%,20%)"/>
+        <stop offset="1" stop-color="hsl(${h},35%,8%)"/>
+      </linearGradient>
+      <filter id="grain">
+        <feTurbulence baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+        <feComponentTransfer><feFuncA type="table" tableValues="0 .12"/></feComponentTransfer>
+      </filter>
+    </defs>
+    <rect width="600" height="900" fill="url(#g)"/>
+    <rect width="600" height="900" filter="url(#grain)"/>
+    <rect x="32" y="32" width="536" height="836" fill="none" stroke="hsl(${h},60%,62%)" stroke-width="3"/>
+    <rect x="58" y="58" width="484" height="784" fill="none" stroke="hsl(${h},45%,48%)" stroke-width="2" stroke-dasharray="10 12"/>
+    <text x="300" y="405" text-anchor="middle" fill="hsl(${h},65%,82%)" font-family="Georgia,serif" font-size="42" font-weight="700">
+      ${title.length > 20 ? title.slice(0,20) + "…" : title}
+    </text>
+    <text x="300" y="468" text-anchor="middle" fill="hsl(${h},40%,68%)" font-family="monospace" font-size="28">${year}</text>
+    <text x="300" y="805" text-anchor="middle" fill="hsl(${h},50%,75%)" font-family="monospace" font-size="18">THE CAGE ARCHIVE</text>
+  </svg>`;
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+}
+
+function poster(m){
+  return m.poster || fallback(m.id);
+}
+
+function animateTitle(){
   const text = "NICOLAS CAGE";
-  const el = document.getElementById('hero-title');
-  el.innerHTML = text.split('').map((ch,i)=>
-    `<span class="letter" style="animation-delay:${i*0.045}s">${ch===' '?'&nbsp;':ch}</span>`
-  ).join('');
+  $("#heroTitle").innerHTML = text.split("").map((ch,i)=>
+    `<span style="animation-delay:${i*0.045}s">${ch === " " ? "&nbsp;" : esc(ch)}</span>`
+  ).join("");
 }
 
-/* ---------- Events ---------- */
-function setupEventListeners(){
-  document.getElementById('search-input').addEventListener('input', renderOverview);
-  document.getElementById('filter-decade').addEventListener('change', renderOverview);
-  document.getElementById('filter-rating').addEventListener('change', renderOverview);
-  document.getElementById('sort-by').addEventListener('change', ()=>{
-    const [field, order] = document.getElementById('sort-by').value.split('-');
-    sortMovies(field, order);
-    renderOverview();
+function applyFilters(){
+  const q = $("#search").value.trim().toLowerCase();
+  const decade = $("#decade").value;
+  const rating = $("#rating").value;
+
+  filtered = movies.filter(m=>{
+    const text = `${m.title} ${m.de} ${m.genre} ${m.year}`.toLowerCase();
+    const qOk = !q || text.includes(q);
+    const dOk = decade === "all" || Math.floor(m.year / 10) * 10 === Number(decade);
+    let rOk = true;
+    if(rating === "top") rOk = m.avg !== null && m.avg >= 80;
+    if(rating === "mid") rOk = m.avg !== null && m.avg >= 60 && m.avg < 80;
+    if(rating === "low") rOk = m.avg !== null && m.avg < 60;
+    if(rating === "unrated") rOk = m.avg === null;
+    return qOk && dOk && rOk;
   });
-  window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
-  window.addEventListener('scroll', onScrollTimecode, { passive:true });
-  onScrollTimecode();
+
+  const [field,dir] = $("#sort").value.split("-");
+  sortList(filtered, field, dir);
 }
 
-function onScrollTimecode(){
-  const doc = document.documentElement;
-  const max = doc.scrollHeight - doc.clientHeight;
-  const pct = max>0 ? window.scrollY/max : 0;
-  const totalFrames = Math.floor(pct * 24*60*60*24); // willkürliche Timecode-Skala
-  const ff = totalFrames % 24;
-  const totalSec = Math.floor(totalFrames/24);
-  const ss = totalSec % 60;
-  const mm = Math.floor(totalSec/60) % 60;
-  const hh = Math.floor(totalSec/3600);
-  const pad = n => String(n).padStart(2,'0');
-  document.getElementById('timecode').textContent = `${pad(hh)}:${pad(mm)}:${pad(ss)}:${pad(ff)}`;
-}
+function sortList(list, field, dir="desc"){
+  list.sort((a,b)=>{
+    let av = field === "title" ? a.title : a[field];
+    let bv = field === "title" ? b.title : b[field];
 
-/* ---------- Filter/Sort ---------- */
-function getFilteredMovies(){
-  const query = document.getElementById('search-input').value.toLowerCase();
-  const decade = document.getElementById('filter-decade').value;
-  const rating = document.getElementById('filter-rating').value;
-  return movies.filter(m=>{
-    const matchQuery = m.titleOrig.toLowerCase().includes(query) ||
-      m.titleDe.toLowerCase().includes(query) ||
-      m.year.toString().includes(query) ||
-      m.genre.toLowerCase().includes(query);
-    const matchDecade = decade==='all' || Math.floor(m.year/10)*10 === parseInt(decade,10);
-    let matchRating = true;
-    if(rating==='top') matchRating = m.avg!==null && m.avg>=80;
-    if(rating==='mid') matchRating = m.avg!==null && m.avg>=60 && m.avg<80;
-    if(rating==='flop') matchRating = m.avg!==null && m.avg<60;
-    if(rating==='unrated') matchRating = m.avg===null;
-    return matchQuery && matchDecade && matchRating;
+    if(av === null || av === undefined || av === "") av = dir === "asc" ? 999999 : -999999;
+    if(bv === null || bv === undefined || bv === "") bv = dir === "asc" ? 999999 : -999999;
+
+    if(typeof av === "string") return dir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
+    return dir === "asc" ? av - bv : bv - av;
   });
 }
-function sortMovies(field, order){
-  movies.sort((a,b)=>{
-    let valA = a[field], valB = b[field];
-    if(field==='title'){ valA=a.titleOrig; valB=b.titleOrig; }
-    if(valA===null) valA = -1; if(valB===null) valB = -1;
-    if(valA<valB) return order==='asc' ? -1 : 1;
-    if(valA>valB) return order==='asc' ? 1 : -1;
-    return 0;
-  });
-}
-function sortData(field){ sortMovies(field,'desc'); renderOverview(); }
 
-/* ---------- Render ---------- */
-function renderAll(){
-  sortMovies('year','desc');
-  renderMovieOfDay();
-  renderOverview();
-  renderTimeline();
-  renderGallery();
-  populateCompareSelects();
-  renderComparison();
-  renderStats();
-  observeReveal();
+function renderStatsStrip(){
+  const rated = movies.filter(m=>m.avg !== null);
+  const avg = rated.length ? rated.reduce((s,m)=>s+m.avg,0) / rated.length : null;
+  const top = rated.length ? [...rated].sort((a,b)=>b.avg-a.avg)[0] : null;
+  const decades = new Set(movies.map(m=>Math.floor(m.year/10)*10));
+
+  $("#statsStrip").innerHTML = `
+    <div class="stat-mini"><strong>${movies.length}</strong><span>Filme</span></div>
+    <div class="stat-mini"><strong>${fmt(avg)}</strong><span>Unser Ø</span></div>
+    <div class="stat-mini"><strong>${rated.length}</strong><span>Bewertet</span></div>
+    <div class="stat-mini"><strong>${decades.size}</strong><span>Jahrzehnte</span></div>
+  `;
+
+  return {rated, avg, top};
 }
 
-function fmt(v, suffix=''){ return v===null||v===undefined ? '–' : (Number.isInteger(v)?v:v.toFixed(1)) + suffix; }
-function colorClass(v, max=100){
-  if(v===null||v===undefined) return 'c-none';
-  const ratio = v/max;
-  if(ratio>=0.8) return 'c-high';
-  if(ratio>=0.6) return 'c-mid';
-  return 'c-low';
-}
-
-function posterOrFallback(m){
-  return m.poster && m.poster.trim() !== '' ? m.poster : getFallbackImage(m);
-}
-
-function renderMovieOfDay(){
-  if(!movies.length) return;
+function renderFeatured(){
   const today = new Date().toISOString().slice(0,10);
   let hash = 0;
-  for(let i=0;i<today.length;i++) hash = ((hash<<5)-hash) + today.charCodeAt(i);
-  const motd = movies[Math.abs(hash) % movies.length];
-  const container = document.getElementById('motd-container');
-  container.innerHTML = `
-    <span class="motd-badge">🌟 Film des Tages</span>
-    <img src="${posterOrFallback(motd)}" alt="${motd.titleOrig}" class="motd-poster" onerror="this.src=getFallbackImage(${JSON.stringify(motd).replace(/"/g,'&quot;')})">
-    <div class="motd-info">
-      <h2>${motd.titleOrig}</h2>
-      <div class="motd-meta">${motd.year} · ${motd.genre || 'Genre unbekannt'}</div>
-      <p>Unser Ø: <strong class="${colorClass(motd.avg)}">${fmt(motd.avg)}</strong> &nbsp;|&nbsp; RT Critics: <strong>${fmt(motd.rtCritics,'%')}</strong></p>
+  for(const c of today) hash = ((hash << 5) - hash) + c.charCodeAt(0);
+  const m = movies[Math.abs(hash) % movies.length];
+
+  $("#featured").innerHTML = `
+    <div class="featured-inner">
+      <img class="poster" src="${poster(m)}" alt="${esc(m.title)}" onerror="this.src=fallback(${m.id})">
+      <div>
+        <span class="badge">🌟 Film des Tages</span>
+        <h2>${esc(m.title)}</h2>
+        <p class="meta">${m.year} · ${esc(m.genre || "Genre unbekannt")}</p>
+        <p style="margin-top:.65rem">
+          Unser Ø: <strong class="${cls(m.avg)}">${fmt(m.avg)}</strong>
+          &nbsp;·&nbsp; RT Critics: <strong>${fmt(m.rtCritics,"%")}</strong>
+          &nbsp;·&nbsp; IMDb: <strong>${fmt(m.imdb)}</strong>
+        </p>
+      </div>
+      <button class="pill-btn" onclick="openModal(${m.id})">Details ansehen</button>
     </div>
-    <button class="select-input" style="background:var(--marquee-red); color:#fff; align-self:center;" onclick="openModal(${motd.id})">Details ansehen</button>
   `;
 }
 
 function renderOverview(){
-  const filtered = getFilteredMovies();
-  const grid = document.getElementById('grid-container');
-  const tbody = document.getElementById('table-body');
+  applyFilters();
 
   if(!filtered.length){
-    grid.innerHTML = `<div class="empty-note">Keine Treffer. Filter zurücksetzen und nochmal versuchen.</div>`;
-    tbody.innerHTML = '';
+    $("#grid").innerHTML = `<div class="empty">Keine Treffer gefunden.</div>`;
+    $("#tbody").innerHTML = "";
     return;
   }
 
-  grid.innerHTML = filtered.map(m=>`
-    <div class="movie-card reveal" onclick="openModal(${m.id})" tabindex="0" role="button" aria-label="${m.titleOrig} Details anzeigen">
-      <div class="poster-wrapper">
-        <span class="badge-avg ${colorClass(m.avg)}">★ ${fmt(m.avg)}</span>
-        <img src="${posterOrFallback(m)}" alt="${m.titleOrig}" loading="lazy" onerror="this.src=getFallbackImage(${JSON.stringify(m).replace(/"/g,'&quot;')})">
+  $("#grid").innerHTML = filtered.map(m=>`
+    <article class="card" tabindex="0" role="button" data-open="${m.id}" aria-label="${esc(m.title)} öffnen">
+      <div class="card-media">
+        <span class="score ${cls(m.avg)}">★ ${fmt(m.avg)}</span>
+        <img src="${poster(m)}" alt="${esc(m.title)}" loading="lazy" onerror="this.src=fallback(${m.id})">
       </div>
-      <div class="card-content">
-        <div>
-          <div class="card-title">${m.titleOrig}</div>
-          <div class="card-sub">${m.year} · ${(m.genre||'').split(',')[0]||'—'}</div>
-        </div>
-        <div class="card-ratings">
-          <div class="rating-item"><span>Tristan</span><span class="rating-val">${fmt(m.tristan)}</span></div>
-          <div class="rating-item"><span>Vincent</span><span class="rating-val">${fmt(m.vincent)}</span></div>
-          <div class="rating-item"><span>RT</span><span class="rating-val">${fmt(m.rtCritics,'%')}</span></div>
+      <div class="card-body">
+        <div class="card-title">${esc(m.title)}</div>
+        <div class="card-sub">${m.year} · ${esc((m.genre || "—").split(",")[0])}</div>
+        <div class="card-row">
+          <span>T<strong>${fmt(m.tristan)}</strong></span>
+          <span>V<strong>${fmt(m.vincent)}</strong></span>
+          <span>RT<strong>${fmt(m.rtCritics,"%")}</strong></span>
         </div>
       </div>
-    </div>
-  `).join('');
+    </article>
+  `).join("");
 
-  tbody.innerHTML = filtered.map(m=>`
-    <tr onclick="openModal(${m.id})" tabindex="0">
+  $("#tbody").innerHTML = filtered.map(m=>`
+    <tr data-open="${m.id}" tabindex="0">
       <td><strong>${m.year}</strong></td>
-      <td>${m.titleOrig}${m.titleDe?`<br><small style="color:var(--parchment-dim);">${m.titleDe}</small>`:''}</td>
-      <td>${m.genre||'—'}</td>
+      <td>${esc(m.title)}${m.de ? `<br><small class="meta">${esc(m.de)}</small>` : ""}</td>
+      <td>${esc(m.genre || "—")}</td>
       <td>${fmt(m.tristan)}</td>
       <td>${fmt(m.vincent)}</td>
-      <td class="${colorClass(m.avg)}"><strong>${fmt(m.avg)}</strong></td>
-      <td>${fmt(m.rtCritics,'%')}</td>
-      <td>${fmt(m.rtAudience,'%')}</td>
+      <td class="${cls(m.avg)}"><strong>${fmt(m.avg)}</strong></td>
+      <td>${fmt(m.rtCritics,"%")}</td>
+      <td>${fmt(m.rtAudience,"%")}</td>
       <td>${fmt(m.imdb)}</td>
     </tr>
-  `).join('');
+  `).join("");
 }
 
 function renderTimeline(){
-  const sortedByYear = [...movies].sort((a,b)=>a.year-b.year);
-  const container = document.getElementById('timeline-container');
-  container.innerHTML = sortedByYear.map(m=>`
-    <div class="timeline-item reveal">
-      <div class="timeline-year">${m.year}</div>
-      <div class="timeline-content" onclick="openModal(${m.id})">
-        <div style="display:flex; gap:1rem; align-items:center;">
-          <img src="${posterOrFallback(m)}" style="width:48px; height:72px; object-fit:cover; border-radius:4px;" onerror="this.src=getFallbackImage(${JSON.stringify(m).replace(/"/g,'&quot;')})">
-          <div>
-            <h4 style="margin-bottom:.2rem;">${m.titleOrig}</h4>
-            <span class="${colorClass(m.avg)}">★ ${fmt(m.avg)}</span>
-            <span style="font-size:.7rem; color:var(--parchment-dim); margin-left:.5rem; font-family:var(--font-mono);">RT ${fmt(m.rtCritics,'%')}</span>
-          </div>
+  const list = [...movies].sort((a,b)=>a.year-b.year);
+  $("#timeline").innerHTML = list.map(m=>`
+    <div class="t-item">
+      <div class="t-year">${m.year}</div>
+      <article class="t-card" data-open="${m.id}" tabindex="0">
+        <img src="${poster(m)}" alt="" loading="lazy" onerror="this.src=fallback(${m.id})">
+        <div>
+          <strong>${esc(m.title)}</strong>
+          <div class="meta">${esc(m.genre || "—")}</div>
+          <div class="${cls(m.avg)}">★ ${fmt(m.avg)}</div>
         </div>
-      </div>
+      </article>
     </div>
-  `).join('');
+  `).join("");
 }
 
 function renderGallery(){
-  const container = document.getElementById('gallery-container');
-  container.innerHTML = movies.map(m=>`
-    <div class="gallery-item reveal" onclick="openModal(${m.id})">
-      <img src="${posterOrFallback(m)}" alt="${m.titleOrig}" loading="lazy" onerror="this.src=getFallbackImage(${JSON.stringify(m).replace(/"/g,'&quot;')})">
-      <div class="gallery-overlay">
-        <h4 style="font-size:.82rem; margin-bottom:.3rem;">${m.titleOrig}</h4>
-        <span class="logo-badge ${colorClass(m.avg)}" style="background:transparent; color:var(--parchment); padding:0;">★ ${fmt(m.avg)} · ${m.year}</span>
+  $("#gallery").innerHTML = movies.map(m=>`
+    <article class="g-item" data-open="${m.id}" tabindex="0" role="button" aria-label="${esc(m.title)} öffnen">
+      <img src="${poster(m)}" alt="${esc(m.title)}" loading="lazy" onerror="this.src=fallback(${m.id})">
+      <div class="g-overlay">
+        <strong>${esc(m.title)}</strong>
+        <span class="meta">${m.year} · ★ ${fmt(m.avg)}</span>
       </div>
+    </article>
+  `).join("");
+}
+
+function populateCompare(){
+  const list = [...movies].sort((a,b)=>a.title.localeCompare(b.title));
+  const html = list.map(m=>`<option value="${m.id}">${esc(m.title)} (${m.year})</option>`).join("");
+  $("#compareA").innerHTML = html;
+  $("#compareB").innerHTML = html;
+
+  const top = [...movies].filter(m=>m.avg !== null).sort((a,b)=>b.avg-a.avg);
+  if(top[0]) $("#compareA").value = top[0].id;
+  if(top[1]) $("#compareB").value = top[1].id;
+}
+
+function bar(label,val,max=100){
+  const w = val === null ? 0 : Math.max(0,Math.min(100,(val/max)*100));
+  return `
+    <div class="bar">
+      <div class="bar-label"><span>${label}</span><strong>${fmt(val,max===100 ? "%" : "")}</strong></div>
+      <div class="bar-bg"><div class="bar-fill ${cls(val,max)}" style="width:${w}%"></div></div>
     </div>
-  `).join('');
+  `;
 }
 
-function populateCompareSelects(){
-  const s1 = document.getElementById('comp-select-1');
-  const s2 = document.getElementById('comp-select-2');
-  const sorted = [...movies].sort((a,b)=>a.titleOrig.localeCompare(b.titleOrig));
-  const options = sorted.map(m=>`<option value="${m.id}">${m.titleOrig} (${m.year})</option>`).join('');
-  s1.innerHTML = options; s2.innerHTML = options;
-  if(movies.length>1) s2.selectedIndex = 1;
-}
+function renderCompare(){
+  const a = movies.find(m=>m.id == $("#compareA").value);
+  const b = movies.find(m=>m.id == $("#compareB").value);
+  if(!a || !b) return;
 
-function renderComparison(){
-  const id1 = document.getElementById('comp-select-1').value;
-  const id2 = document.getElementById('comp-select-2').value;
-  const m1 = movies.find(m=>m.id==id1);
-  const m2 = movies.find(m=>m.id==id2);
-  if(!m1||!m2) return;
-  const container = document.getElementById('compare-container');
-  const renderCol = m=>`
-    <div class="compare-col">
-      <div style="display:flex; gap:1rem; margin-bottom:1.4rem; align-items:center;">
-        <img src="${posterOrFallback(m)}" style="width:72px; height:108px; object-fit:cover; border-radius:4px;" onerror="this.src=getFallbackImage(${JSON.stringify(m).replace(/"/g,'&quot;')})">
+  const card = m => `
+    <article class="compare-card">
+      <div class="compare-head">
+        <img src="${poster(m)}" alt="" onerror="this.src=fallback(${m.id})">
         <div>
-          <h3 style="font-family:var(--font-display); letter-spacing:.02em; font-size:1.3rem;">${m.titleOrig} (${m.year})</h3>
-          <p style="font-size:.78rem; color:var(--parchment-dim);">${m.genre||'—'}</p>
+          <h3>${esc(m.title)}</h3>
+          <p class="meta">${m.year} · ${esc(m.genre || "—")}</p>
         </div>
       </div>
-      ${renderBar('Tristan', m.tristan, 100)}
-      ${renderBar('Vincent', m.vincent, 100)}
-      ${renderBar('Unser Ø', m.avg, 100)}
-      ${renderBar('RT Critics', m.rtCritics, 100)}
-      ${renderBar('RT Audience', m.rtAudience, 100)}
-      ${renderBar('IMDb', m.imdb, 10)}
-    </div>
+      ${bar("Tristan",m.tristan)}
+      ${bar("Vincent",m.vincent)}
+      ${bar("Unser Ø",m.avg)}
+      ${bar("RT Critics",m.rtCritics)}
+      ${bar("RT Audience",m.rtAudience)}
+      ${bar("IMDb",m.imdb,10)}
+    </article>
   `;
-  container.innerHTML = renderCol(m1) + renderCol(m2);
+
+  $("#compareGrid").innerHTML = card(a) + card(b);
 }
-function renderBar(label, val, max){
-  const pct = val===null ? 0 : (val/max)*100;
-  return `
-    <div class="bar-chart-row">
-      <div class="bar-label"><span>${label}</span><strong>${fmt(val, max===100?'%':'')}</strong></div>
-      <div class="bar-bg"><div class="bar-fill ${colorClass(val,max)}" style="width:${pct}%;"></div></div>
-    </div>
-  `;
+
+function destroyChart(id){
+  if(charts[id]){
+    charts[id].destroy();
+    charts[id] = null;
+  }
+}
+
+function chartOptions(title){
+  return {
+    responsive:true,
+    maintainAspectRatio:true,
+    plugins:{
+      title:{display:true,text:title,color:getComputedStyle(document.documentElement).getPropertyValue("--text").trim()},
+      legend:{labels:{color:getComputedStyle(document.documentElement).getPropertyValue("--muted").trim()}}
+    },
+    scales:{
+      x:{ticks:{color:getComputedStyle(document.documentElement).getPropertyValue("--muted").trim(), maxRotation:0, autoSkip:true, maxTicksLimit:8},grid:{color:"rgba(255,255,255,.08)"}},
+      y:{ticks:{color:getComputedStyle(document.documentElement).getPropertyValue("--muted").trim()},grid:{color:"rgba(255,255,255,.08)"},suggestedMin:0,suggestedMax:100}
+    }
+  };
 }
 
 function renderStats(){
-  const rated = movies.filter(m=>m.avg!==null);
-  const total = movies.length;
-  const avgAll = rated.length ? (rated.reduce((a,m)=>a+m.avg,0)/rated.length).toFixed(1) : '–';
-  const maxMovie = rated.length ? [...rated].sort((a,b)=>b.avg-a.avg)[0] : null;
-  const bothRated = movies.filter(m=>m.tristan!==null && m.vincent!==null);
-  const diffAvg = bothRated.length ? (bothRated.reduce((a,m)=>a+Math.abs(m.tristan-m.vincent),0)/bothRated.length).toFixed(1) : '–';
+  const rated = movies.filter(m=>m.avg !== null);
+  const avg = rated.length ? rated.reduce((s,m)=>s+m.avg,0) / rated.length : null;
+  const top = rated.length ? [...rated].sort((a,b)=>b.avg-a.avg)[0] : null;
+  const both = movies.filter(m=>m.tristan !== null && m.vincent !== null);
+  const diff = both.length ? both.reduce((s,m)=>s+Math.abs(m.tristan-m.vincent),0) / both.length : null;
 
-  document.getElementById('stats-cards-container').innerHTML = `
-    <div class="stat-card"><div>Gesehene Filme</div><div class="stat-val">${total}</div></div>
-    <div class="stat-card"><div>Gesamt-Durchschnitt</div><div class="stat-val ${colorClass(avgAll==='–'?null:parseFloat(avgAll))}">${avgAll}</div></div>
-    <div class="stat-card"><div>Höchste Wertung</div><div class="stat-val" style="font-size:1.05rem; margin-top:.7rem;">${maxMovie? maxMovie.titleOrig+' ('+fmt(maxMovie.avg)+')' : '–'}</div></div>
-    <div class="stat-card"><div>Ø Abweichung (T vs. V)</div><div class="stat-val" style="color:var(--brass);">${diffAvg}${diffAvg!=='–'?' Pkt.':''}</div></div>
+  $("#statCards").innerHTML = `
+    <div class="stat-card"><span>Filme insgesamt</span><strong>${movies.length}</strong></div>
+    <div class="stat-card"><span>Ø Bewertung</span><strong class="${cls(avg)}">${fmt(avg)}</strong></div>
+    <div class="stat-card"><span>Top-Film</span><strong style="font-size:1.1rem;line-height:1.15">${top ? esc(top.title) + " · " + fmt(top.avg) : "–"}</strong></div>
+    <div class="stat-card"><span>Ø Abweichung T/V</span><strong>${fmt(diff)}</strong></div>
   `;
 
-  document.getElementById('stat-strip').innerHTML = `
-    <div class="s-item"><div class="s-val">${total}</div><div class="s-label">Filme geloggt</div></div>
-    <div class="s-item"><div class="s-val">${avgAll}</div><div class="s-label">Ø Bewertung</div></div>
-    <div class="s-item"><div class="s-val">${rated.length}</div><div class="s-label">Persönlich bewertet</div></div>
-  `;
+  if(!window.Chart) return;
 
-  const sortedChron = [...movies].sort((a,b)=>a.year-b.year);
-  destroyChart('chart-timeline');
-  chartInstances['chart-timeline'] = new Chart(document.getElementById('chart-timeline'), {
-    type:'line',
+  const chronological = [...movies].sort((a,b)=>a.year-b.year);
+
+  destroyChart("years");
+  charts.years = new Chart($("#chartYears"), {
+    type:"line",
     data:{
-      labels: sortedChron.map(m=>`${m.titleOrig} (${m.year})`),
+      labels:chronological.map(m=>`${m.title} (${m.year})`),
       datasets:[
-        { label:'Unser Ø', data:sortedChron.map(m=>m.avg), borderColor:'#5fae7f', spanGaps:true, tension:.3 },
-        { label:'IMDb ×10', data:sortedChron.map(m=>m.imdb!==null?m.imdb*10:null), borderColor:'#cc9c46', spanGaps:true, tension:.3 },
-        { label:'RT Critics', data:sortedChron.map(m=>m.rtCritics), borderColor:'#c1392b', spanGaps:true, tension:.3 }
+        {label:"Unser Ø",data:chronological.map(m=>m.avg),borderColor:"#67bd86",backgroundColor:"rgba(103,189,134,.15)",spanGaps:true,tension:.32},
+        {label:"RT Critics",data:chronological.map(m=>m.rtCritics),borderColor:"#c63d2d",backgroundColor:"rgba(198,61,45,.12)",spanGaps:true,tension:.32},
+        {label:"IMDb ×10",data:chronological.map(m=>m.imdb === null ? null : m.imdb*10),borderColor:"#d5a64f",backgroundColor:"rgba(213,166,79,.12)",spanGaps:true,tension:.32}
       ]
     },
-    options:{ responsive:true, plugins:{ title:{ display:true, text:'Bewertungsverlauf über die Jahre', color:'#f2e6c9' }, legend:{ labels:{ color:'#b8a988' } } },
-      scales:{ x:{ ticks:{ color:'#7a6c56', maxRotation:0, autoSkip:true, maxTicksLimit:8 }, grid:{ color:'#3a2c22' } }, y:{ ticks:{ color:'#7a6c56' }, grid:{ color:'#3a2c22' } } } }
+    options:chartOptions("Bewertungsverlauf")
   });
 
-  const last6 = sortedChron.filter(m=>m.tristan!==null||m.vincent!==null).slice(-6);
-  destroyChart('chart-compare');
-  chartInstances['chart-compare'] = new Chart(document.getElementById('chart-compare'), {
-    type:'bar',
-    data:{ labels:last6.map(m=>m.titleOrig), datasets:[
-      { label:'Tristan', data:last6.map(m=>m.tristan), backgroundColor:'#cc9c46' },
-      { label:'Vincent', data:last6.map(m=>m.vincent), backgroundColor:'#3f8f86' }
-    ]},
-    options:{ responsive:true, plugins:{ title:{ display:true, text:'Tristan vs. Vincent (letzte bewertete Filme)', color:'#f2e6c9' }, legend:{ labels:{ color:'#b8a988' } } },
-      scales:{ x:{ ticks:{ color:'#7a6c56' }, grid:{ display:false } }, y:{ ticks:{ color:'#7a6c56' }, grid:{ color:'#3a2c22' } } } }
-  });
-
-  const decades = {};
-  movies.forEach(m=>{
-    const dec = Math.floor(m.year/10)*10 + 'er';
-    if(!decades[dec]) decades[dec]=[];
-    if(m.avg!==null) decades[dec].push(m.avg);
-  });
-  const decLabels = Object.keys(decades).sort();
-  const decData = decLabels.map(d=> decades[d].length ? (decades[d].reduce((a,b)=>a+b,0)/decades[d].length).toFixed(1) : 0);
-  destroyChart('chart-decades');
-  chartInstances['chart-decades'] = new Chart(document.getElementById('chart-decades'), {
-    type:'bar',
-    data:{ labels:decLabels, datasets:[{ label:'Ø Bewertung', data:decData, backgroundColor:'#5fae7f' }] },
-    options:{ responsive:true, plugins:{ title:{ display:true, text:'Durchschnitt nach Jahrzehnt', color:'#f2e6c9' }, legend:{ display:false } },
-      scales:{ x:{ ticks:{ color:'#7a6c56' }, grid:{ display:false } }, y:{ ticks:{ color:'#7a6c56' }, grid:{ color:'#3a2c22' } } } }
+  const last = chronological.filter(m=>m.tristan !== null || m.vincent !== null).slice(-8);
+  destroyChart("people");
+  charts.people = new Chart($("#chartPeople"), {
+    type:"bar",
+    data:{
+      labels:last.map(m=>m.title),
+      datasets:[
+        {label:"Tristan",data:last.map(m=>m.tristan),backgroundColor:"#d5a64f"},
+        {label:"Vincent",data:last.map(m=>m.vincent),backgroundColor:"#45a39a"}
+      ]
+    },
+    options:chartOptions("Tristan vs. Vincent")
   });
 }
-function destroyChart(id){ if(chartInstances[id]) chartInstances[id].destroy(); }
 
-/* ---------- Scroll-Reveal ---------- */
-function observeReveal(){
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold:.1 });
-  document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));
-}
-
-/* ---------- UI Helpers ---------- */
-function switchView(viewId, btn){
-  document.querySelectorAll('.view-section').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
-  document.getElementById(`view-${viewId}`).classList.add('active');
-  if(btn) btn.classList.add('active');
-  observeReveal();
-}
-function toggleOverviewMode(){
-  isGridView = !isGridView;
-  const grid = document.getElementById('grid-container');
-  const table = document.getElementById('table-container');
-  const btn = document.getElementById('view-toggle-btn');
-  if(isGridView){ grid.style.display='grid'; table.style.display='none'; btn.innerHTML='📋 Tabelle'; }
-  else{ grid.style.display='none'; table.style.display='block'; btn.innerHTML='🖼️ Raster'; }
-}
-function toggleTheme(){
-  const html = document.documentElement;
-  html.setAttribute('data-theme', html.getAttribute('data-theme')==='daylight' ? 'reel' : 'daylight');
-}
-function toggleContrast(){
-  const html = document.documentElement;
-  html.setAttribute('data-theme', html.getAttribute('data-theme')==='contrast' ? 'reel' : 'contrast');
-}
-
-const GENRE_HUES = {};
-function hueForGenre(genre){
-  const key = (genre||'—').split(',')[0].trim().toLowerCase();
-  if(GENRE_HUES[key]!==undefined) return GENRE_HUES[key];
-  let h=0; for(let i=0;i<key.length;i++) h = (h*31 + key.charCodeAt(i)) % 360;
-  GENRE_HUES[key] = h; return h;
-}
-function getFallbackImage(m){
-  const title = (m.titleOrig||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-  const year = m.year || '';
-  const hue = hueForGenre(m.genre);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
-    <defs>
-      <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="hsl(${hue},32%,16%)"/>
-        <stop offset="1" stop-color="hsl(${hue},28%,9%)"/>
-      </linearGradient>
-    </defs>
-    <rect width="300" height="450" fill="url(#g)"/>
-    <rect x="0" y="0" width="300" height="450" fill="none" stroke="hsl(${hue},40%,45%)" stroke-width="2"/>
-    <rect x="14" y="14" width="272" height="422" fill="none" stroke="hsl(${hue},40%,45%)" stroke-width="1" stroke-dasharray="2 4"/>
-    <text x="50%" y="46%" dominant-baseline="middle" text-anchor="middle" fill="hsl(${hue},45%,80%)" font-family="Georgia, serif" font-size="19" font-weight="bold">
-      ${title.length>26? title.slice(0,24)+'…' : title}
-    </text>
-    <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="hsl(${hue},20%,55%)" font-family="monospace" font-size="14">${year}</text>
-  </svg>`;
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-}
-
-/* ---------- Modal ---------- */
 function openModal(id){
-  const m = movies.find(i=>i.id===id);
+  const m = movies.find(x=>x.id === id);
   if(!m) return;
-  document.getElementById('modal-img').src = posterOrFallback(m);
-  document.getElementById('modal-img').onerror = function(){ this.src = getFallbackImage(m); };
-  document.getElementById('modal-year').innerText = m.year;
-  document.getElementById('modal-title').innerText = m.titleOrig;
-  document.getElementById('modal-title-de').innerText = m.titleDe ? `Deutscher Titel: ${m.titleDe}` : '';
-  document.getElementById('modal-genre').innerText = m.genre ? `Genre: ${m.genre}` : '';
-  document.getElementById('modal-tristan').innerText = fmt(m.tristan);
-  document.getElementById('modal-vincent').innerText = fmt(m.vincent);
-  document.getElementById('modal-avg').innerText = fmt(m.avg);
-  document.getElementById('modal-avg').className = colorClass(m.avg);
-  document.getElementById('modal-rc').innerText = fmt(m.rtCritics,'%');
-  document.getElementById('modal-ra').innerText = fmt(m.rtAudience,'%');
-  document.getElementById('modal-imdb').innerText = fmt(m.imdb);
-  const modal = document.getElementById('movie-modal');
-  modal.classList.add('open');
-  modal.focus();
-}
-function closeModal(){
-  document.getElementById('movie-modal').classList.remove('open');
-  document.getElementById('btn-modal-again').style.display = 'none';
-}
-function showSurpriseMovie(){
-  if(!movies.length) return;
-  const randomId = movies[Math.floor(Math.random()*movies.length)].id;
-  openModal(randomId);
-  document.getElementById('btn-modal-again').style.display = 'inline-block';
+
+  $("#modalImg").src = poster(m);
+  $("#modalImg").alt = m.title;
+  $("#modalImg").onerror = () => $("#modalImg").src = fallback(m.id);
+
+  $("#modalYear").textContent = m.year;
+  $("#modalTitle").textContent = m.title;
+  $("#modalDe").textContent = m.de ? `Deutscher Titel: ${m.de}` : "";
+  $("#modalGenre").textContent = m.genre ? `Genre: ${m.genre}` : "";
+
+  $("#modalT").textContent = fmt(m.tristan);
+  $("#modalV").textContent = fmt(m.vincent);
+  $("#modalAvg").textContent = fmt(m.avg);
+  $("#modalAvg").className = cls(m.avg);
+  $("#modalRC").textContent = fmt(m.rtCritics,"%");
+  $("#modalRA").textContent = fmt(m.rtAudience,"%");
+  $("#modalIM").textContent = fmt(m.imdb);
+
+  $("#againBtn").classList.toggle("hidden", !lastSurprise);
+  $("#modalOverlay").classList.add("open");
+  $("#modalOverlay").focus();
 }
 
-window.addEventListener('DOMContentLoaded', init);
+function closeModal(){
+  $("#modalOverlay").classList.remove("open");
+  lastSurprise = false;
+}
+
+function surprise(){
+  if(!movies.length) return;
+  lastSurprise = true;
+  openModal(movies[Math.floor(Math.random()*movies.length)].id);
+  $("#againBtn").classList.remove("hidden");
+}
+
+function switchView(view){
+  $$(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.view === view));
+  $$(".view").forEach(v=>v.classList.toggle("active", v.id === `view-${view}`));
+
+  if(view === "stats") renderStats();
+  if(view === "compare") renderCompare();
+}
+
+function toggleMode(){
+  gridMode = !gridMode;
+  $("#grid").classList.toggle("hidden", !gridMode);
+  $("#tableWrap").classList.toggle("hidden", gridMode);
+  $("#modeBtn").textContent = gridMode ? "📋 Tabelle" : "🖼 Raster";
+}
+
+function updateTimecode(){
+  const doc = document.documentElement;
+  const max = doc.scrollHeight - doc.clientHeight;
+  const pct = max > 0 ? scrollY / max : 0;
+  const frames = Math.floor(pct * 24 * 60 * 60 * 8);
+  const ff = frames % 24;
+  const totalSec = Math.floor(frames / 24);
+  const ss = totalSec % 60;
+  const mm = Math.floor(totalSec / 60) % 60;
+  const hh = Math.floor(totalSec / 3600);
+  const p = n => String(n).padStart(2,"0");
+  $("#timecode").textContent = `${p(hh)}:${p(mm)}:${p(ss)}:${p(ff)}`;
+}
+
+function bindEvents(){
+  $("#search").addEventListener("input", renderOverview);
+  $("#decade").addEventListener("change", renderOverview);
+  $("#rating").addEventListener("change", renderOverview);
+  $("#sort").addEventListener("change", renderOverview);
+  $("#modeBtn").addEventListener("click", toggleMode);
+
+  $$(".nav-btn").forEach(btn => btn.addEventListener("click", () => switchView(btn.dataset.view)));
+
+  document.addEventListener("click", e=>{
+    const opener = e.target.closest("[data-open]");
+    if(opener) openModal(Number(opener.dataset.open));
+  });
+
+  document.addEventListener("keydown", e=>{
+    if(e.key === "Escape") closeModal();
+    if((e.key === "Enter" || e.key === " ") && document.activeElement?.dataset?.open){
+      e.preventDefault();
+      openModal(Number(document.activeElement.dataset.open));
+    }
+  });
+
+  $("#closeModal").addEventListener("click", closeModal);
+  $("#backBtn").addEventListener("click", closeModal);
+  $("#modalOverlay").addEventListener("click", e=>{
+    if(e.target === $("#modalOverlay")) closeModal();
+  });
+
+  $("#surpriseBtn").addEventListener("click", surprise);
+  $("#againBtn").addEventListener("click", surprise);
+
+  $("#compareA").addEventListener("change", renderCompare);
+  $("#compareB").addEventListener("change", renderCompare);
+
+  $("#themeBtn").addEventListener("click", ()=>{
+    const html = document.documentElement;
+    const current = html.dataset.theme;
+    html.dataset.theme = current === "day" ? "reel" : "day";
+    localStorage.setItem("cage-theme", html.dataset.theme);
+    renderStats();
+  });
+
+  $("#contrastBtn").addEventListener("click", ()=>{
+    const html = document.documentElement;
+    html.dataset.theme = html.dataset.theme === "contrast" ? "reel" : "contrast";
+    localStorage.setItem("cage-theme", html.dataset.theme);
+    renderStats();
+  });
+
+  $$("th[data-sort-col]").forEach(th=>{
+    th.addEventListener("click", ()=>{
+      const field = th.dataset.sortCol;
+      const value = field === "title" ? "title-asc" : `${field}-desc`;
+      $("#sort").value = value;
+      renderOverview();
+    });
+  });
+
+  addEventListener("scroll", updateTimecode, {passive:true});
+}
+
+function renderAll(){
+  animateTitle();
+  renderStatsStrip();
+  renderFeatured();
+  renderOverview();
+  renderTimeline();
+  renderGallery();
+  populateCompare();
+  renderCompare();
+  renderStats();
+  updateTimecode();
+}
+
+async function init(){
+  const savedTheme = localStorage.getItem("cage-theme");
+  if(savedTheme) document.documentElement.dataset.theme = savedTheme;
+
+  await loadData();
+  bindEvents();
+  renderAll();
+}
+
+window.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
 </html>

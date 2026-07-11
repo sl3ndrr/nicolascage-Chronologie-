@@ -1,33 +1,31 @@
 <!DOCTYPE html>
 <html lang="de" data-theme="reel">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THE CAGE ARCHIVE — Filmografie & Bewertungen</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 
 <style>
 :root{
-  --font-display:"Bebas Neue", Impact, sans-serif;
-  --font-body:"Space Grotesk", system-ui, sans-serif;
-  --font-mono:"IBM Plex Mono", monospace;
+  --font-display:"Bebas Neue",Impact,sans-serif;
+  --font-body:"Space Grotesk",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",monospace;
 
   --bg:#0e0a08;
-  --bg-2:#17100c;
+  --bg2:#17100c;
   --panel:#1f1711;
-  --panel-2:#2a2018;
+  --panel2:#2a2018;
   --line:#4a3729;
   --text:#f3e5c6;
   --muted:#b8a682;
   --red:#c63d2d;
-  --red-2:#ff674f;
   --gold:#d5a64f;
-  --gold-2:#ffd784;
+  --gold2:#ffd784;
   --teal:#45a39a;
   --green:#67bd86;
   --amber:#d5a64f;
@@ -35,7 +33,6 @@
   --none:#746858;
 
   --radius:16px;
-  --radius-sm:10px;
   --shadow:0 20px 60px rgba(0,0,0,.45);
   --shadow-soft:0 12px 35px rgba(0,0,0,.28);
   --ease:cubic-bezier(.16,.84,.44,1);
@@ -43,37 +40,19 @@
 
 [data-theme="day"]{
   --bg:#f5ecd7;
-  --bg-2:#eadcc0;
+  --bg2:#eadcc0;
   --panel:#fff8e8;
-  --panel-2:#efe0c3;
+  --panel2:#efe0c3;
   --line:#d4bf99;
   --text:#21160d;
   --muted:#6e5d42;
   --red:#a92f22;
   --gold:#8d6420;
-  --gold-2:#ad7e30;
+  --gold2:#ad7e30;
   --none:#9b8d74;
 }
 
-[data-theme="contrast"]{
-  --bg:#000;
-  --bg-2:#000;
-  --panel:#050505;
-  --panel-2:#101010;
-  --line:#fff;
-  --text:#fff;
-  --muted:#fff;
-  --red:#ff3b30;
-  --gold:#ffd60a;
-  --gold-2:#ffd60a;
-  --teal:#00e5ff;
-  --green:#39ff6a;
-  --amber:#ffd60a;
-  --bad:#ff3b30;
-  --none:#fff;
-}
-
-@media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 
@@ -83,40 +62,40 @@ body{
   min-height:100vh;
   color:var(--text);
   font-family:var(--font-body);
-  background:
-    radial-gradient(circle at 15% -10%, rgba(213,166,79,.18), transparent 34rem),
-    radial-gradient(circle at 88% 8%, rgba(198,61,45,.16), transparent 30rem),
-    linear-gradient(180deg,var(--bg),var(--bg-2));
   line-height:1.5;
   overflow-x:hidden;
   padding-bottom:6rem;
+  background:
+    radial-gradient(circle at 15% -10%,rgba(213,166,79,.18),transparent 34rem),
+    radial-gradient(circle at 88% 8%,rgba(198,61,45,.16),transparent 30rem),
+    linear-gradient(180deg,var(--bg),var(--bg2));
 }
 body::before{
   content:"";
   position:fixed;
   inset:0;
-  pointer-events:none;
   z-index:-1;
+  pointer-events:none;
   opacity:.45;
   background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 4px),
-    radial-gradient(circle at center, transparent 0 52%, rgba(0,0,0,.38));
+    repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 4px),
+    radial-gradient(circle at center,transparent 0 52%,rgba(0,0,0,.38));
 }
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none}
-a{color:inherit;text-decoration:none}
-:focus-visible{outline:3px solid var(--gold-2);outline-offset:4px}
+a{text-decoration:none;color:inherit}
+:focus-visible{outline:3px solid var(--gold2);outline-offset:4px}
 .container{width:min(1440px,calc(100% - 32px));margin-inline:auto}
 .hidden{display:none!important}
 
 .filmstrip{
   height:18px;
   background:
-    radial-gradient(circle 5px at 10px 50%, var(--bg) 98%, transparent) 0 0/34px 18px repeat-x,
-    linear-gradient(90deg,var(--gold),var(--gold-2),var(--gold));
-  box-shadow:0 2px 0 rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.12);
+    radial-gradient(circle 5px at 10px 50%,var(--bg) 98%,transparent) 0 0/34px 18px repeat-x,
+    linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));
+  box-shadow:0 2px 0 rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.12);
+  animation:filmrun 18s linear infinite;
 }
-.filmstrip.animate{animation:filmrun 18s linear infinite}
 @keyframes filmrun{to{background-position:-680px 0,0 0}}
 
 .header{
@@ -127,7 +106,7 @@ a{color:inherit;text-decoration:none}
   backdrop-filter:blur(18px);
   border-bottom:1px solid rgba(255,255,255,.08);
 }
-[data-theme="day"] .header{background:rgba(245,236,215,.78)}
+[data-theme="day"] .header{background:rgba(245,236,215,.82)}
 .header-inner{
   min-height:76px;
   display:flex;
@@ -150,27 +129,24 @@ a{color:inherit;text-decoration:none}
   color:#1b1109;
   font-family:var(--font-display);
   font-size:1.8rem;
-  background:radial-gradient(circle at 35% 28%, var(--gold-2), var(--gold));
+  background:radial-gradient(circle at 35% 28%,var(--gold2),var(--gold));
   box-shadow:0 0 30px rgba(213,166,79,.25);
 }
-.logo-text{
-  display:flex;
-  flex-direction:column;
-  line-height:1;
-}
 .logo-title{
+  display:block;
   font-family:var(--font-display);
   font-size:1.65rem;
   letter-spacing:.045em;
+  line-height:1;
 }
 .logo-sub{
+  display:block;
   color:var(--muted);
   font-family:var(--font-mono);
   font-size:.68rem;
   letter-spacing:.08em;
   text-transform:uppercase;
 }
-
 .nav{
   display:flex;
   align-items:center;
@@ -203,17 +179,14 @@ a{color:inherit;text-decoration:none}
   height:2px;
   transform:translateX(-50%);
   border-radius:2px;
-  background:var(--red-2);
+  background:var(--red);
 }
-
-.actions{display:flex;gap:.45rem}
 .icon-btn,.pill-btn{
   border:1px solid var(--line);
   background:rgba(255,255,255,.045);
   border-radius:999px;
   min-height:42px;
   padding:.55rem .85rem;
-  color:var(--text);
   transition:.2s var(--ease);
 }
 .icon-btn:hover,.pill-btn:hover{
@@ -239,7 +212,7 @@ a{color:inherit;text-decoration:none}
   padding:.35rem .75rem;
   border:1px solid var(--line);
   border-radius:999px;
-  color:var(--gold-2);
+  color:var(--gold2);
   background:rgba(255,255,255,.04);
   font-family:var(--font-mono);
   font-size:.72rem;
@@ -274,17 +247,19 @@ a{color:inherit;text-decoration:none}
   gap:.85rem;
   max-width:850px;
 }
-.stat-mini{
-  padding:1rem;
+.stat-mini,.stat-card,.chart-card,.compare-card,.rank-list{
   border:1px solid var(--line);
   border-radius:var(--radius);
   background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));
   box-shadow:var(--shadow-soft);
 }
+.stat-mini{
+  padding:1rem;
+}
 .stat-mini strong{
   display:block;
   font-family:var(--font-display);
-  color:var(--gold-2);
+  color:var(--gold2);
   font-size:2.2rem;
   line-height:1;
 }
@@ -304,16 +279,9 @@ a{color:inherit;text-decoration:none}
   border-radius:calc(var(--radius) + 6px);
   background:
     linear-gradient(135deg,rgba(198,61,45,.18),transparent 34%),
-    linear-gradient(180deg,var(--panel),var(--panel-2));
+    linear-gradient(180deg,var(--panel),var(--panel2));
   box-shadow:var(--shadow);
   overflow:hidden;
-}
-.featured::after{
-  content:"";
-  position:absolute;
-  inset:auto -20% -45% -20%;
-  height:180px;
-  background:radial-gradient(ellipse,rgba(213,166,79,.14),transparent 70%);
 }
 .featured-inner{
   position:relative;
@@ -327,7 +295,7 @@ a{color:inherit;text-decoration:none}
   width:100%;
   aspect-ratio:2/3;
   object-fit:cover;
-  background:var(--panel-2);
+  background:var(--panel2);
   border-radius:14px;
   border:1px solid rgba(255,255,255,.1);
   box-shadow:0 18px 35px rgba(0,0,0,.38);
@@ -399,7 +367,6 @@ a{color:inherit;text-decoration:none}
   background:var(--bg);
   border-radius:999px;
   padding:0 .8rem;
-  color:var(--text);
 }
 .view{display:none}
 .view.active{display:block;animation:fadeUp .35s var(--ease)}
@@ -415,7 +382,7 @@ a{color:inherit;text-decoration:none}
   overflow:hidden;
   border:1px solid var(--line);
   border-radius:var(--radius);
-  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
   box-shadow:var(--shadow-soft);
   cursor:pointer;
   transition:.28s var(--ease);
@@ -450,7 +417,10 @@ a{color:inherit;text-decoration:none}
   object-fit:cover;
   transition:.45s var(--ease);
 }
-.card:hover img{transform:scale(1.06);filter:saturate(1.1) contrast(1.04)}
+.card:hover img{
+  transform:scale(1.06);
+  filter:saturate(1.1) contrast(1.04);
+}
 .score{
   position:absolute;
   top:.7rem;
@@ -488,7 +458,10 @@ a{color:inherit;text-decoration:none}
   font-family:var(--font-mono);
   font-size:.68rem;
 }
-.card-row strong{display:block;color:var(--text)}
+.card-row strong{
+  display:block;
+  color:var(--text);
+}
 
 .table-wrap{
   overflow:auto;
@@ -510,16 +483,18 @@ th,td{
 th{
   position:sticky;
   top:0;
-  background:var(--panel-2);
-  color:var(--gold-2);
+  background:var(--panel2);
+  color:var(--gold2);
   font-family:var(--font-mono);
   font-size:.7rem;
   letter-spacing:.06em;
   text-transform:uppercase;
   cursor:pointer;
 }
-tbody tr{transition:.18s}
-tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
+tbody tr:hover{
+  background:rgba(255,255,255,.055);
+  cursor:pointer;
+}
 
 .timeline{
   max-width:900px;
@@ -569,8 +544,16 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   cursor:pointer;
   transition:.2s var(--ease);
 }
-.t-card:hover{transform:scale(1.025);border-color:var(--gold)}
-.t-card img{width:48px;height:72px;object-fit:cover;border-radius:9px}
+.t-card:hover{
+  transform:scale(1.025);
+  border-color:var(--gold);
+}
+.t-card img{
+  width:48px;
+  height:72px;
+  object-fit:cover;
+  border-radius:9px;
+}
 
 .gallery{
   display:grid;
@@ -581,7 +564,7 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   position:relative;
   overflow:hidden;
   border:1px solid var(--line);
-  border-radius:var(--radius-sm);
+  border-radius:14px;
   cursor:pointer;
 }
 .g-item img{
@@ -610,12 +593,9 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   grid-template-columns:repeat(2,1fr);
   gap:1rem;
 }
-.compare-card,.chart-card,.stat-card{
-  border:1px solid var(--line);
-  border-radius:var(--radius);
+.compare-card,.chart-card,.stat-card,.rank-list{
   background:var(--panel);
   padding:1rem;
-  box-shadow:var(--shadow-soft);
 }
 .compare-head{
   display:flex;
@@ -623,7 +603,12 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   gap:.9rem;
   margin-bottom:1rem;
 }
-.compare-head img{width:72px;height:108px;object-fit:cover;border-radius:12px}
+.compare-head img{
+  width:72px;
+  height:108px;
+  object-fit:cover;
+  border-radius:12px;
+}
 .bar{margin:.85rem 0}
 .bar-label{
   display:flex;
@@ -663,10 +648,50 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
 .stat-card strong{
   display:block;
   margin-top:.35rem;
-  color:var(--gold-2);
+  color:var(--gold2);
   font-family:var(--font-display);
   font-size:2.25rem;
   line-height:1;
+}
+.stats-rankings{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1rem;
+  margin-bottom:1rem;
+}
+.rank-list h3{
+  margin-bottom:.75rem;
+  color:var(--gold2);
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.rank-list ol{
+  list-style:none;
+  display:grid;
+  gap:.55rem;
+}
+.rank-list li{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:.75rem;
+  align-items:start;
+  padding:.55rem .65rem;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  background:rgba(255,255,255,.035);
+}
+.rank-list small{
+  display:block;
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:.68rem;
+}
+.rank-score{
+  font-family:var(--font-mono);
+  font-weight:800;
+  white-space:nowrap;
 }
 .charts{
   display:grid;
@@ -690,7 +715,6 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   color:var(--muted);
   font-family:var(--font-mono);
 }
-
 .fab{
   position:fixed;
   right:1.4rem;
@@ -708,7 +732,6 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   transition:.22s var(--ease);
 }
 .fab:hover{transform:translateY(-3px) rotate(-1.5deg)}
-
 .timecode{
   position:fixed;
   left:1rem;
@@ -719,7 +742,7 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   border-radius:999px;
   background:rgba(0,0,0,.5);
   backdrop-filter:blur(12px);
-  color:var(--gold-2);
+  color:var(--gold2);
   font-family:var(--font-mono);
   font-size:.7rem;
   pointer-events:none;
@@ -749,12 +772,15 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   grid-template-columns:310px 1fr;
   animation:projector .28s var(--ease);
 }
-@keyframes projector{from{opacity:0;transform:scale(.96);filter:brightness(2)}to{opacity:1;transform:none;filter:none}}
+@keyframes projector{
+  from{opacity:0;transform:scale(.96);filter:brightness(2)}
+  to{opacity:1;transform:none;filter:none}
+}
 .modal-img{
   width:100%;
   height:100%;
   object-fit:cover;
-  background:var(--panel-2);
+  background:var(--panel2);
 }
 .modal-body{
   padding:1.25rem;
@@ -775,7 +801,10 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   place-items:center;
   color:var(--muted);
 }
-.close:hover{color:#fff;background:var(--red)}
+.close:hover{
+  color:#fff;
+  background:var(--red);
+}
 .modal h2{
   margin:.75rem 0 .25rem;
   font-family:var(--font-display);
@@ -786,7 +815,7 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   margin-top:1.25rem;
   border:1px solid var(--line);
   border-radius:var(--radius);
-  background:var(--panel-2);
+  background:var(--panel2);
   padding:1rem;
 }
 .rating-grid{
@@ -814,7 +843,7 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
   .controls{grid-template-columns:1fr}
   .filters{justify-content:flex-start}
   .stats-strip,.stat-cards{grid-template-columns:repeat(2,1fr)}
-  .charts,.compare-grid{grid-template-columns:1fr}
+  .charts,.compare-grid,.stats-rankings{grid-template-columns:1fr}
   .featured-inner{grid-template-columns:90px 1fr}
   .featured-inner .pill-btn{grid-column:1/-1}
 }
@@ -836,13 +865,13 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
 </head>
 
 <body>
-<div class="filmstrip animate"></div>
+<div class="filmstrip"></div>
 
 <header class="header">
   <div class="container header-inner">
     <a class="logo" href="#" aria-label="THE CAGE ARCHIVE Startseite">
       <span class="logo-mark">C</span>
-      <span class="logo-text">
+      <span>
         <span class="logo-title">THE CAGE ARCHIVE</span>
         <span class="logo-sub">Tristan & Vincent Collection</span>
       </span>
@@ -856,10 +885,7 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
       <button class="nav-btn" data-view="stats">Statistiken</button>
     </nav>
 
-    <div class="actions">
-      <button class="icon-btn" id="themeBtn" aria-label="Theme wechseln" title="Theme wechseln">🌓</button>
-      <button class="icon-btn" id="contrastBtn" aria-label="Kontrastmodus" title="Kontrastmodus">👁</button>
-    </div>
+    <button class="icon-btn" id="themeBtn" aria-label="Theme wechseln" title="Tag/Nacht wechseln">🌓</button>
   </div>
 </header>
 
@@ -957,9 +983,14 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
 
   <section id="view-stats" class="view">
     <div id="statCards" class="stat-cards"></div>
+
+    <div id="statsRankings" class="stats-rankings"></div>
+
     <div class="charts">
       <div class="chart-card"><canvas id="chartYears"></canvas></div>
       <div class="chart-card"><canvas id="chartPeople"></canvas></div>
+      <div class="chart-card"><canvas id="chartDecades"></canvas></div>
+      <div class="chart-card"><canvas id="chartDistribution"></canvas></div>
     </div>
   </section>
 </main>
@@ -992,7 +1023,7 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
       </div>
 
       <div class="modal-actions">
-        <button class="pill-btn" id="againBtn">Nochmal würfeln 🎲</button>
+        <button class="pill-btn hidden" id="againBtn">Nochmal würfeln 🎲</button>
         <button class="pill-btn" id="backBtn">Zurück</button>
       </div>
     </div>
@@ -1000,181 +1031,153 @@ tbody tr:hover{background:rgba(255,255,255,.055);cursor:pointer}
 </div>
 
 <script>
-const DATA_URL = "";
+const MOVIES = [
+{y:1982,o:"Fast Times at Ridgemont High",d:"Ich glaub’, ich steh’ im Wald",g:"Coming-of-Age, Komödie",t:null,v:78,a:80,rc:null,ra:null,im:7.1,p:"https://media.netflixreleases.com/images/def6d95e5715daa1961f125a9e9a44fb/fast-times-at-ridgemmont-high-1982-poster.jpg"},
+{y:1983,o:"Rumble Fish",d:"",g:"Drama",t:null,v:null,a:null,rc:75,ra:83,im:7.1,p:""},
+{y:1983,o:"Valley Girl",d:"– Das Mädchen aus dem Tal",g:"Coming-of-Age",t:null,v:null,a:null,rc:83,ra:57,im:6.4,p:""},
+{y:1984,o:"Birdy",d:"",g:"Drama",t:null,v:null,a:null,rc:84,ra:86,im:7.2,p:""},
+{y:1984,o:"Racing with the Moon",d:"Die Zeit verrinnt, die Navy ruft",g:"Drama",t:null,v:null,a:null,rc:60,ra:52,im:6.6,p:""},
+{y:1984,o:"Cotton Club",d:"",g:"Drama, Musik",t:null,v:null,a:null,rc:74,ra:56,im:6.5,p:""},
+{y:1986,o:"Peggy Sue Got Married",d:"Peggy Sue hat geheiratet",g:"Fantasy, Komödie",t:null,v:null,a:null,rc:87,ra:56,im:6.4,p:""},
+{y:1986,o:"The Boy in Blue",d:"Finish – Endspurt bis zum Sieg",g:"Sportfilm",t:null,v:null,a:null,rc:20,ra:36,im:5.6,p:""},
+{y:1986,o:"Moonstruck",d:"Mondsüchtig",g:"Romantik, Komödie",t:null,v:null,a:null,rc:92,ra:80,im:7.1,p:""},
+{y:1987,o:"Raising Arizona",d:"Arizona Junior",g:"Krimi, Komödie",t:null,v:null,a:null,rc:90,ra:85,im:7.3,p:""},
+{y:1989,o:"Vampire's Kiss",d:"",g:"Krimi, Komödie",t:null,v:null,a:null,rc:65,ra:60,im:6.1,p:""},
+{y:1990,o:"Fire Birds",d:"– Wings of the Apache",g:"Action, Krieg",t:null,v:null,a:null,rc:10,ra:23,im:4.8,p:""},
+{y:1990,o:"Time to Kill",d:"Zeit zu leben, Zeit zu sterben",g:"Krimi, Drama",t:70,v:60,a:65,rc:22,ra:33,im:5.2,p:""},
+{y:1990,o:"Wild at Heart",d:"– Die Geschichte von Sailor und Lula",g:"Drama, Krimi",t:null,v:null,a:null,rc:69,ra:79,im:7.2,p:""},
+{y:1991,o:"Zandalee",d:"– Das sechste Gebot",g:"Drama",t:null,v:null,a:null,rc:33,ra:25,im:4.4,p:""},
+{y:1992,o:"Honeymoon in Vegas",d:"- aber nicht mit meiner Braut",g:"Komödie",t:null,v:null,a:null,rc:66,ra:37,im:5.8,p:""},
+{y:1993,o:"Amos & Andrew",d:"– Zwei fast perfekte Chaoten",g:"Komödie",t:null,v:null,a:null,rc:17,ra:30,im:5.6,p:""},
+{y:1993,o:"Deadfall",d:"",g:"Krimi, Thriller",t:null,v:null,a:null,rc:34,ra:37,im:3.5,p:""},
+{y:1993,o:"Red Rock West",d:"",g:"Krimi, Thriller",t:null,v:null,a:null,rc:97,ra:75,im:7,p:""},
+{y:1994,o:"Guarding Tess",d:"Tess und ihr Bodyguard",g:"Action, Komödie",t:null,v:null,a:null,rc:57,ra:40,im:5.8,p:""},
+{y:1994,o:"It Could Happen to You",d:"2 Millionen Dollar Trinkgeld",g:"Romantik, Komödie",t:null,v:null,a:null,rc:71,ra:59,im:6.4,p:""},
+{y:1994,o:"Trapped in Paradise",d:"Schneesturm im Paradies",g:"Komödie",t:null,v:null,a:null,rc:10,ra:45,im:5.9,p:""},
+{y:1995,o:"Kiss of Death",d:"",g:"Krimi, Thriller",t:null,v:null,a:null,rc:68,ra:33,im:5.9,p:""},
+{y:1995,o:"Leaving Las Vegas",d:"",g:"Drama",t:null,v:null,a:null,rc:91,ra:85,im:7.5,p:""},
+{y:1996,o:"The Rock",d:"– Fels der Entscheidung",g:"Action",t:84,v:80,a:82,rc:67,ra:85,im:7.4,p:""},
+{y:1997,o:"Con Air",d:"",g:"Action",t:72,v:72,a:58,rc:75,ra:null,im:6.9,p:""},
+{y:1997,o:"Face/Off",d:"Im Körper des Feindes",g:"Action, Thriller",t:82,v:82,a:93,rc:82,ra:null,im:7.3,p:""},
+{y:1998,o:"City of Angels",d:"Stadt der Engel",g:"Romantik, Fantasy",t:null,v:null,a:null,rc:57,ra:82,im:6.7,p:""},
+{y:1998,o:"Snake Eyes",d:"Spiel auf Zeit",g:"Action, Krimi",t:95,v:95,a:95,rc:42,ra:37,im:6.1,p:""},
+{y:1999,o:"8mm",d:"– Acht Millimeter",g:"Krimi, Thriller",t:80,v:85,a:83,rc:23,ra:59,im:6.6,p:""},
+{y:1999,o:"Bringing Out the Dead",d:"– Nächte der Erinnerung",g:"Drama",t:null,v:null,a:null,rc:73,ra:66,im:6.8,p:""},
+{y:2000,o:"Gone in 60 Seconds",d:"Nur noch 60 Sekunden",g:"Action",t:75,v:72,a:74,rc:25,ra:77,im:6.5,p:""},
+{y:2000,o:"The Family Man",d:"Family Man",g:"Romantik, Komödie",t:null,v:null,a:null,rc:53,ra:68,im:6.8,p:""},
+{y:2001,o:"Captain Corelli's Mandolin",d:"Corellis Mandoline",g:"Krieg, Romantik",t:null,v:null,a:null,rc:28,ra:50,im:5.9,p:""},
+{y:2001,o:"Christmas Carol: The Movie",d:"Ein Weihnachtsmärchen",g:"Familie, Fantasy",t:null,v:null,a:null,rc:13,ra:29,im:5.3,p:""},
+{y:2002,o:"Adaptation",d:"– Der Orchideen-Dieb",g:"Komödie, Drama",t:null,v:null,a:null,rc:90,ra:84,im:7.7,p:""},
+{y:2002,o:"Sonny",d:"",g:"Drama",t:null,v:null,a:null,rc:21,ra:45,im:5.5,p:""},
+{y:2002,o:"Windtalkers",d:"",g:"Krieg, Action",t:null,v:null,a:null,rc:33,ra:50,im:6.1,p:""},
+{y:2003,o:"Matchstick Men",d:"Tricks",g:"Krimi, Komödie",t:null,v:null,a:null,rc:82,ra:73,im:7.3,p:""},
+{y:2004,o:"National Treasure",d:"Das Vermächtnis der Tempelritter",g:"Abenteuer, Action",t:62,v:65,a:64,rc:46,ra:76,im:6.9,p:""},
+{y:2005,o:"Lord of War",d:"– Händler des Todes",g:"Krimi, Drama",t:90,v:90,a:62,rc:84,ra:null,im:7.6,p:""},
+{y:2005,o:"The Weather Man",d:"",g:"Komödie, Drama",t:null,v:null,a:null,rc:60,ra:58,im:6.6,p:""},
+{y:2006,o:"The Ant Bully",d:"Lucas, der Ameisenschreck",g:"Animation, Familie",t:null,v:null,a:null,rc:62,ra:43,im:5.9,p:""},
+{y:2006,o:"The Wicker Man",d:"– Ritual des Bösen",g:"Horror, Thriller",t:35,v:35,a:15,rc:17,ra:null,im:3.8,p:""},
+{y:2006,o:"World Trade Center",d:"",g:"Drama, Historie",t:40,v:61,a:51,rc:66,ra:62,im:6,p:""},
+{y:2007,o:"Ghost Rider",d:"",g:"Action, Fantasy",t:73,v:69,a:71,rc:27,ra:48,im:5.3,p:""},
+{y:2007,o:"National Treasure: Book of Secrets",d:"Das Vermächtnis des geheimen Buches",g:"Abenteuer, Action",t:76,v:75,a:76,rc:36,ra:67,im:6.5,p:""},
+{y:2007,o:"Next",d:"",g:"Sci-Fi, Action",t:null,v:null,a:null,rc:28,ra:57,im:6.2,p:""},
+{y:2008,o:"Bangkok Dangerous",d:"",g:"Action, Thriller",t:null,v:null,a:null,rc:8,ra:24,im:5.3,p:""},
+{y:2009,o:"Astro Boy",d:"– Der Film",g:"Animation, Sci-Fi",t:null,v:null,a:null,rc:50,ra:50,im:6.2,p:""},
+{y:2009,o:"Bad Lieutenant: Port of Call New Orleans",d:"– Cop ohne Gewissen",g:"Krimi, Drama",t:null,v:null,a:null,rc:86,ra:58,im:6.6,p:""},
+{y:2009,o:"G-Force",d:"– Agenten mit Biss",g:"Animation, Komödie",t:69,v:69,a:22,rc:38,ra:null,im:5.1,p:""},
+{y:2009,o:"Knowing",d:"– Die Zukunft endet jetzt",g:"Sci-Fi, Thriller",t:null,v:null,a:null,rc:34,ra:48,im:6.2,p:""},
+{y:2010,o:"Kick-Ass",d:"",g:"Action, Komödie",t:88,v:88,a:77,rc:81,ra:null,im:7.6,p:""},
+{y:2010,o:"The Sorcerer's Apprentice",d:"Duell der Magier",g:"Fantasy, Action",t:65,v:59,a:62,rc:40,ra:53,im:6.1,p:""},
+{y:2011,o:"Drive Angry",d:"",g:"Action, Fantasy",t:null,v:null,a:null,rc:47,ra:35,im:5.4,p:""},
+{y:2011,o:"Ghost Rider: Spirit of Vengeance",d:"",g:"Action, Fantasy",t:null,v:null,a:null,rc:49,ra:49,im:null,p:""},
+{y:2011,o:"Seeking Justice",d:"Pakt der Rache",g:"Thriller, Krimi",t:null,v:null,a:null,rc:28,ra:36,im:6.1,p:""},
+{y:2011,o:"Season of the Witch",d:"Der letzte Tempelritter",g:"Fantasy, Action",t:52,v:57,a:55,rc:11,ra:29,im:5.4,p:""},
+{y:2011,o:"Trespass",d:"",g:"Thriller, Action",t:null,v:null,a:null,rc:10,ra:22,im:5.3,p:""},
+{y:2011,o:"Stolen",d:"",g:"Action, Thriller",t:69,v:69,a:69,rc:20,ra:33,im:5.5,p:""},
+{y:2012,o:"Joe",d:"– Die Rache ist sein",g:"Drama",t:null,v:null,a:null,rc:86,ra:64,im:6.9,p:""},
+{y:2013,o:"The Croods",d:"Die Croods",g:"Animation, Familie",t:null,v:null,a:null,rc:72,ra:77,im:7.2,p:""},
+{y:2013,o:"The Frozen Ground",d:"Frozen Ground",g:"Krimi, Thriller",t:50,v:50,a:61,rc:53,ra:null,im:6.4,p:""},
+{y:2014,o:"Dying of the Light",d:"– Jede Minute zählt",g:"Action, Thriller",t:20,v:20,a:20,rc:10,ra:23,im:4.4,p:""},
+{y:2014,o:"Left Behind",d:"",g:"Thriller, Drama",t:12,v:51,a:32,rc:0,ra:57,im:3.1,p:""},
+{y:2014,o:"Outcast",d:"– Die letzten Tempelritter",g:"Action, Abenteuer",t:null,v:null,a:null,rc:4,ra:25,im:4.6,p:""},
+{y:2014,o:"Tokarev",d:"– Die Vergangenheit stirbt niemals",g:"Krimi, Thriller",t:null,v:null,a:null,rc:12,ra:21,im:5,p:""},
+{y:2015,o:"Pay the Ghost",d:"",g:"Thriller, Horror",t:null,v:null,a:null,rc:10,ra:27,im:5.2,p:""},
+{y:2015,o:"The Runner",d:"Der Kandidat – Macht hat ihren Preis",g:"Drama, Thriller",t:null,v:null,a:null,rc:24,ra:23,im:4.7,p:""},
+{y:2016,o:"Army of One",d:"",g:"Action, Thriller",t:90,v:73,a:82,rc:25,ra:28,im:5,p:""},
+{y:2016,o:"Dog Eat Dog",d:"",g:"Krimi, Drama",t:null,v:null,a:null,rc:49,ra:20,im:4.8,p:""},
+{y:2016,o:"Snowden",d:"",g:"Biopic, Drama",t:null,v:null,a:null,rc:75,ra:75,im:null,p:""},
+{y:2016,o:"The Trust",d:"",g:"Krimi, Thriller",t:55,v:62,a:59,rc:63,ra:41,im:5.4,p:""},
+{y:2016,o:"USS Indianapolis: Men of Courage",d:"",g:"Krieg, Drama",t:null,v:null,a:null,rc:17,ra:30,im:5.3,p:""},
+{y:2017,o:"Arsenal",d:"",g:"Action, Krimi",t:null,v:null,a:null,rc:3,ra:18,im:4,p:""},
+{y:2017,o:"Inconceivable",d:"Tödliches Verlangen",g:"Thriller, Krimi",t:null,v:null,a:null,rc:31,ra:32,im:5.2,p:""},
+{y:2017,o:"Mom and Dad",d:"",g:"Horror, Komödie",t:65,v:65,a:65,rc:75,ra:46,im:5.6,p:""},
+{y:2017,o:"The Humanity Bureau",d:"– Flucht aus New America",g:"Sci-Fi, Drama",t:null,v:null,a:null,rc:25,ra:24,im:4.6,p:""},
+{y:2017,o:"Vengeance: A Love Story",d:"– Pfad der Vergeltung",g:"Krimi, Thriller",t:null,v:null,a:null,rc:24,ra:null,im:5.2,p:""},
+{y:2018,o:"211",d:"– Cops under Fire",g:"Action, Krimi",t:null,v:null,a:null,rc:4,ra:10,im:4.4,p:""},
+{y:2018,o:"Between Worlds",d:"",g:"Sci-Fi, Thriller",t:29,v:39,a:34,rc:33,ra:35,im:4.3,p:""},
+{y:2018,o:"Looking Glass",d:"Willkommen im Motor Way Motel",g:"Thriller, Mystery",t:null,v:null,a:null,rc:17,ra:17,im:4.6,p:""},
+{y:2018,o:"Mandy",d:"",g:"Horror, Action",t:null,v:null,a:null,rc:98,ra:97,im:null,p:""},
+{y:2018,o:"Spider-Man: Into the Spider-Verse",d:"Spider-Man: A New Universe",g:"Animation, Action",t:95,v:95,a:97,rc:94,ra:null,im:8.4,p:""},
+{y:2018,o:"Teen Titans Go! To the Movies",d:"",g:"Animation, Komödie",t:null,v:null,a:null,rc:91,ra:72,im:6.7,p:""},
+{y:2019,o:"A Score to Settle",d:"",g:"Action, Krimi",t:40,v:57,a:49,rc:15,ra:24,im:4.7,p:""},
+{y:2019,o:"Color Out of Space",d:"Die Farbe aus dem All",g:"Horror, Sci-Fi",t:null,v:null,a:null,rc:86,ra:76,im:6.2,p:""},
+{y:2019,o:"Grand Isle",d:"– Mörderische Falle",g:"Thriller, Krimi",t:null,v:null,a:null,rc:9,ra:39,im:4.6,p:""},
+{y:2019,o:"Kill Chain",d:"",g:"Action, Thriller",t:null,v:null,a:null,rc:39,ra:null,im:5,p:""},
+{y:2019,o:"Primal",d:"– Die Jagd ist eröffnet",g:"Action, Thriller",t:42,v:57,a:50,rc:37,ra:26,im:4.9,p:""},
+{y:2019,o:"Running with the Devil",d:"",g:"Thriller, Drama",t:28,v:15,a:22,rc:24,ra:38,im:5.5,p:""},
+{y:2020,o:"Jiu Jitsu",d:"",g:"Action, Thriller",t:null,v:null,a:null,rc:5,ra:5,im:null,p:""},
+{y:2020,o:"The Croods: A New Age",d:"Die Croods – Alles auf Anfang",g:"Animation, Familie",t:null,v:null,a:null,rc:77,ra:94,im:6.9,p:""},
+{y:2021,o:"Pig",d:"",g:"Drama",t:75,v:81,a:78,rc:97,ra:84,im:6.9,p:""},
+{y:2021,o:"Prisoners of the Ghostland",d:"",g:"Sci-Fi, Thriller",t:null,v:null,a:null,rc:62,ra:25,im:4.2,p:""},
+{y:2021,o:"Willy's Wonderland",d:"",g:"Horror, Komödie",t:null,v:null,a:null,rc:40,ra:40,im:null,p:""},
+{y:2022,o:"Butcher's Crossing",d:"",g:"Western, Drama",t:null,v:null,a:null,rc:74,ra:62,im:5.7,p:""},
+{y:2022,o:"The Unbearable Weight of Massive Talent",d:"Massive Talent",g:"Action, Komödie",t:70,v:70,a:87,rc:87,ra:null,im:7,p:""},
+{y:2023,o:"Dream Scenario",d:"",g:"Komödie, Fantasy",t:null,v:null,a:null,rc:78,ra:78,im:null,p:""},
+{y:2023,o:"Renfield",d:"",g:"Komödie, Horror",t:null,v:null,a:null,rc:83,ra:83,im:null,p:""},
+{y:2023,o:"Sympathy for the Devil",d:"",g:"Krimi, Thriller",t:null,v:null,a:null,rc:60,ra:48,im:5.5,p:""},
+{y:2023,o:"The Old Way",d:"",g:"Western",t:null,v:null,a:null,rc:33,ra:70,im:5.6,p:""},
+{y:2023,o:"The Retirement Plan",d:"",g:"Action, Komödie",t:null,v:null,a:null,rc:60,ra:40,im:5.1,p:""},
+{y:2024,o:"Longlegs",d:"",g:"Horror, Thriller",t:null,v:null,a:null,rc:65,ra:65,im:null,p:""},
+{y:2024,o:"Arcadian",d:"",g:"Sci-Fi, Horror",t:null,v:null,a:null,rc:78,ra:56,im:5.5,p:""},
+{y:2024,o:"The Surfer",d:"",g:"Thriller, Drama",t:null,v:null,a:null,rc:84,ra:47,im:5.6,p:""},
+{y:2025,o:"The Carpenter's Son",d:"",g:"Drama",t:null,v:null,a:null,rc:null,ra:null,im:null,p:""},
+{y:2025,o:"Gunslingers",d:"",g:"Action, Western",t:null,v:null,a:null,rc:null,ra:null,im:null,p:""}
+];
 
-const EMBEDDED_DATA = `y	o	d	g	t	v	a	rc	ra	im	p
-1982	Fast Times at Ridgemont High	Ich glaub’, ich steh’ im Wald	Coming-of-Age, Komödie		78	80			7.1	https://media.netflixreleases.com/images/def6d95e5715daa1961f125a9e9a44fb/fast-times-at-ridgemmont-high-1982-poster.jpg
-1983	Rumble Fish		Drama				75	83	7.1	
-1983	Valley Girl	– Das Mädchen aus dem Tal	Coming-of-Age				83	57	6.4	
-1984	Birdy		Drama				84	86	7.2	
-1984	Racing with the Moon	Die Zeit verrinnt, die Navy ruft	Drama				60	52	6.6	
-1984	Cotton Club		Drama, Musik				74	56	6.5	
-1986	Peggy Sue Got Married	Peggy Sue hat geheiratet	Fantasy, Komödie				87	56	6.4	
-1986	The Boy in Blue	Finish – Endspurt bis zum Sieg	Sportfilm				20	36	5.6	
-1986	Moonstruck	Mondsüchtig	Romantik, Komödie				92	80	7.1	
-1987	Raising Arizona	Arizona Junior	Krimi, Komödie				90	85	7.3	
-1989	Vampire's Kiss		Krimi, Komödie				65	60	6.1	
-1990	Fire Birds	– Wings of the Apache	Action, Krieg				10	23	4.8	
-1990	Time to Kill	Zeit zu leben, Zeit zu sterben	Krimi, Drama	70	60	65	22	33	5.2	
-1990	Wild at Heart	– Die Geschichte von Sailor und Lula	Drama, Krimi				69	79	7.2	
-1991	Zandalee	– Das sechste Gebot	Drama				33	25	4.4	
-1992	Honeymoon in Vegas	- aber nicht mit meiner Braut	Komödie				66	37	5.8	
-1993	Amos & Andrew	– Zwei fast perfekte Chaoten	Komödie				17	30	5.6	
-1993	Deadfall		Krimi, Thriller				34	37	3.5	
-1993	Red Rock West		Krimi, Thriller				97	75	7	
-1994	Guarding Tess	Tess und ihr Bodyguard	Action, Komödie				57	40	5.8	
-1994	It Could Happen to You	2 Millionen Dollar Trinkgeld	Romantik, Komödie				71	59	6.4	
-1994	Trapped in Paradise	Schneesturm im Paradies	Komödie				10	45	5.9	
-1995	Kiss of Death		Krimi, Thriller				68	33	5.9	
-1995	Leaving Las Vegas		Drama				91	85	7.5	
-1996	The Rock	– Fels der Entscheidung	Action	84	80	82	67	85	7.4	
-1997	Con Air		Action	72	72	58	75		6.9	
-1997	Face/Off	Im Körper des Feindes	Action, Thriller	82	82	93	82		7.3	
-1998	City of Angels	Stadt der Engel	Romantik, Fantasy				57	82	6.7	
-1998	Snake Eyes	Spiel auf Zeit	Action, Krimi	95	95	95	42	37	6.1	
-1999	8mm	– Acht Millimeter	Krimi, Thriller	80	85	83	23	59	6.6	
-1999	Bringing Out the Dead	– Nächte der Erinnerung	Drama				73	66	6.8	
-2000	Gone in 60 Seconds	Nur noch 60 Sekunden	Action	75	72	74	25	77	6.5	
-2000	The Family Man	Family Man	Romantik, Komödie				53	68	6.8	
-2001	Captain Corelli's Mandolin	Corellis Mandoline	Krieg, Romantik				28	50	5.9	
-2001	Christmas Carol: The Movie	Ein Weihnachtsmärchen	Familie, Fantasy				13	29	5.3	
-2002	Adaptation	– Der Orchideen-Dieb	Komödie, Drama				90	84	7.7	
-2002	Sonny		Drama				21	45	5.5	
-2002	Windtalkers		Krieg, Action				33	50	6.1	
-2003	Matchstick Men	Tricks	Krimi, Komödie				82	73	7.3	
-2004	National Treasure	Das Vermächtnis der Tempelritter	Abenteuer, Action	62	65	64	46	76	6.9	
-2005	Lord of War	– Händler des Todes	Krimi, Drama	90	90	62	84		7.6	
-2005	The Weather Man		Komödie, Drama				60	58	6.6	
-2006	The Ant Bully	Lucas, der Ameisenschreck	Animation, Familie				62	43	5.9	
-2006	The Wicker Man	– Ritual des Bösen	Horror, Thriller	35	35	15	17		3.8	
-2006	World Trade Center		Drama, Historie	40	61	51	66	62	6	
-2007	Ghost Rider		Action, Fantasy	73	69	71	27	48	5.3	
-2007	National Treasure: Book of Secrets	Das Vermächtnis des geheimen Buches	Abenteuer, Action	76	75	76	36	67	6.5	
-2007	Next		Sci-Fi, Action				28	57	6.2	
-2008	Bangkok Dangerous		Action, Thriller				8	24	5.3	
-2009	Astro Boy	– Der Film	Animation, Sci-Fi				50	50	6.2	
-2009	Bad Lieutenant: Port of Call New Orleans	– Cop ohne Gewissen	Krimi, Drama				86	58	6.6	
-2009	G-Force	– Agenten mit Biss	Animation, Komödie	69	69	22	38		5.1	
-2009	Knowing	– Die Zukunft endet jetzt	Sci-Fi, Thriller				34	48	6.2	
-2010	Kick-Ass		Action, Komödie	88	88	77	81		7.6	
-2010	The Sorcerer's Apprentice	Duell der Magier	Fantasy, Action	65	59	62	40	53	6.1	
-2011	Drive Angry		Action, Fantasy				47	35	5.4	
-2011	Ghost Rider: Spirit of Vengeance		Action, Fantasy				49	49		
-2011	Seeking Justice	Pakt der Rache	Thriller, Krimi				28	36	6.1	
-2011	Season of the Witch	Der letzte Tempelritter	Fantasy, Action	52	57	55	11	29	5.4	
-2011	Trespass		Thriller, Action				10	22	5.3	
-2011	Stolen		Action, Thriller	69	69	69	20	33	5.5	
-2012	Joe	– Die Rache ist sein	Drama				86	64	6.9	
-2013	The Croods	Die Croods	Animation, Familie				72	77	7.2	
-2013	The Frozen Ground	Frozen Ground	Krimi, Thriller	50	50	61	53		6.4	
-2014	Dying of the Light	– Jede Minute zählt	Action, Thriller	20	20	20	10	23	4.4	
-2014	Left Behind		Thriller, Drama	12	51	32	0	57	3.1	
-2014	Outcast	– Die letzten Tempelritter	Action, Abenteuer				4	25	4.6	
-2014	Tokarev	– Die Vergangenheit stirbt niemals	Krimi, Thriller				12	21	5	
-2015	Pay the Ghost		Thriller, Horror				10	27	5.2	
-2015	The Runner	Der Kandidat – Macht hat ihren Preis	Drama, Thriller				24	23	4.7	
-2016	Army of One		Action, Thriller	90	73	82	25	28	5	
-2016	Dog Eat Dog		Krimi, Drama				49	20	4.8	
-2016	Snowden		Biopic, Drama				75	75		
-2016	The Trust		Krimi, Thriller	55	62	59	63	41	5.4	
-2016	USS Indianapolis: Men of Courage		Krieg, Drama				17	30	5.3	
-2017	Arsenal		Action, Krimi				3	18	4	
-2017	Inconceivable	Tödliches Verlangen	Thriller, Krimi				31	32	5.2	
-2017	Mom and Dad		Horror, Komödie	65	65	65	75	46	5.6	
-2017	The Humanity Bureau	– Flucht aus New America	Sci-Fi, Drama				25	24	4.6	
-2017	Vengeance: A Love Story	– Pfad der Vergeltung	Krimi, Thriller				24		5.2	
-2018	211	– Cops under Fire	Action, Krimi				4	10	4.4	
-2018	Between Worlds		Sci-Fi, Thriller	29	39	34	33	35	4.3	
-2018	Looking Glass	Willkommen im Motor Way Motel	Thriller, Mystery				17	17	4.6	
-2018	Mandy		Horror, Action				98	97		
-2018	Spider-Man: Into the Spider-Verse	Spider-Man: A New Universe	Animation, Action	95	95	97	94		8.4	
-2018	Teen Titans Go! To the Movies		Animation, Komödie				91	72	6.7	
-2019	A Score to Settle		Action, Krimi	40	57	49	15	24	4.7	
-2019	Color Out of Space	Die Farbe aus dem All	Horror, Sci-Fi				86	76	6.2	
-2019	Grand Isle	– Mörderische Falle	Thriller, Krimi				9	39	4.6	
-2019	Kill Chain		Action, Thriller				39		5	
-2019	Primal	– Die Jagd ist eröffnet	Action, Thriller	42	57	50	37	26	4.9	
-2019	Running with the Devil		Thriller, Drama	28	15	22	24	38	5.5	
-2020	Jiu Jitsu		Action, Thriller				5	5		
-2020	The Croods: A New Age	Die Croods – Alles auf Anfang	Animation, Familie				77	94	6.9	
-2021	Pig		Drama	75	81	78	97	84	6.9	
-2021	Prisoners of the Ghostland		Sci-Fi, Thriller				62	25	4.2	
-2021	Willy's Wonderland		Horror, Komödie				40	40		
-2022	Butcher's Crossing		Western, Drama				74	62	5.7	
-2022	The Unbearable Weight of Massive Talent	Massive Talent	Action, Komödie	70	70	87	87		7	
-2023	Dream Scenario		Komödie, Fantasy				78	78		
-2023	Renfield		Komödie, Horror				83	83		
-2023	Sympathy for the Devil		Krimi, Thriller				60	48	5.5	
-2023	The Old Way		Western				33	70	5.6	
-2023	The Retirement Plan		Action, Komödie				60	40	5.1	
-2024	Longlegs		Horror, Thriller				65	65		
-2024	Arcadian		Sci-Fi, Horror				78	56	5.5	
-2024	The Surfer		Thriller, Drama				84	47	5.6	
-2025	The Carpenter's Son		Drama							
-2025	Gunslingers		Action, Western							`;
+let movies = MOVIES.map((m,i)=>({
+  id:i,
+  year:m.y,
+  title:m.o,
+  de:m.d,
+  genre:m.g,
+  tristan:m.t,
+  vincent:m.v,
+  avg:m.a,
+  rtCritics:m.rc,
+  rtAudience:m.ra,
+  imdb:m.im,
+  poster:m.p
+}));
 
-let movies = [];
 let filtered = [];
 let gridMode = true;
 let charts = {};
 let lastSurprise = false;
 
-const $ = sel => document.querySelector(sel);
-const $$ = sel => [...document.querySelectorAll(sel)];
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
 function esc(s=""){
-  return String(s).replace(/[&<>"']/g, m => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  return String(s).replace(/[&<>"']/g,m=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
   }[m]));
 }
 
-function num(v){
-  if(v === undefined || v === null) return null;
-  const s = String(v).trim().replace(",",".");
-  if(!s) return null;
-  const n = parseFloat(s);
-  return Number.isFinite(n) ? n : null;
-}
-
-function parseTSV(text){
-  const rows = text.trim().split(/\r?\n/).map(r => r.split("\t"));
-  const header = rows.shift();
-  return rows.map((r,i)=>{
-    while(r.length < header.length) r.push("");
-    const o = Object.fromEntries(header.map((h,idx)=>[h,r[idx] ?? ""]));
-    return {
-      id:i,
-      year:parseInt(o.y,10),
-      title:o.o || "Unbekannt",
-      de:o.d || "",
-      genre:o.g || "",
-      tristan:num(o.t),
-      vincent:num(o.v),
-      avg:num(o.a),
-      rtCritics:num(o.rc),
-      rtAudience:num(o.ra),
-      imdb:num(o.im),
-      poster:o.p || ""
-    };
-  }).filter(m => m.year && m.title);
-}
-
-async function loadData(){
-  if(DATA_URL.trim()){
-    try{
-      const res = await fetch(DATA_URL);
-      if(!res.ok) throw new Error(res.status);
-      movies = parseTSV(await res.text());
-      return;
-    }catch(e){
-      console.warn("Externe Daten konnten nicht geladen werden. Nutze eingebettete Daten.", e);
-    }
-  }
-  movies = parseTSV(EMBEDDED_DATA);
-}
-
 function fmt(v,suffix=""){
-  return v === null || v === undefined ? "–" : `${Number.isInteger(v) ? v : v.toFixed(1)}${suffix}`;
+  return v === null || v === undefined ? "–" : `${Number.isInteger(v) ? v : Number(v).toFixed(1)}${suffix}`;
 }
 
 function cls(v,max=100){
@@ -1230,8 +1233,13 @@ function poster(m){
 function animateTitle(){
   const text = "NICOLAS CAGE";
   $("#heroTitle").innerHTML = text.split("").map((ch,i)=>
-    `<span style="animation-delay:${i*0.045}s">${ch === " " ? "&nbsp;" : esc(ch)}</span>`
+    `<span style="animation-delay:${i * .045}s">${ch === " " ? "&nbsp;" : esc(ch)}</span>`
   ).join("");
+}
+
+function average(list,key){
+  const vals = list.map(m=>m[key]).filter(v=>v !== null && v !== undefined);
+  return vals.length ? vals.reduce((a,b)=>a+b,0) / vals.length : null;
 }
 
 function applyFilters(){
@@ -1243,19 +1251,21 @@ function applyFilters(){
     const text = `${m.title} ${m.de} ${m.genre} ${m.year}`.toLowerCase();
     const qOk = !q || text.includes(q);
     const dOk = decade === "all" || Math.floor(m.year / 10) * 10 === Number(decade);
+
     let rOk = true;
     if(rating === "top") rOk = m.avg !== null && m.avg >= 80;
     if(rating === "mid") rOk = m.avg !== null && m.avg >= 60 && m.avg < 80;
     if(rating === "low") rOk = m.avg !== null && m.avg < 60;
     if(rating === "unrated") rOk = m.avg === null;
+
     return qOk && dOk && rOk;
   });
 
   const [field,dir] = $("#sort").value.split("-");
-  sortList(filtered, field, dir);
+  sortList(filtered,field,dir);
 }
 
-function sortList(list, field, dir="desc"){
+function sortList(list,field,dir="desc"){
   list.sort((a,b)=>{
     let av = field === "title" ? a.title : a[field];
     let bv = field === "title" ? b.title : b[field];
@@ -1263,16 +1273,18 @@ function sortList(list, field, dir="desc"){
     if(av === null || av === undefined || av === "") av = dir === "asc" ? 999999 : -999999;
     if(bv === null || bv === undefined || bv === "") bv = dir === "asc" ? 999999 : -999999;
 
-    if(typeof av === "string") return dir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
+    if(typeof av === "string"){
+      return dir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
+    }
+
     return dir === "asc" ? av - bv : bv - av;
   });
 }
 
 function renderStatsStrip(){
   const rated = movies.filter(m=>m.avg !== null);
-  const avg = rated.length ? rated.reduce((s,m)=>s+m.avg,0) / rated.length : null;
-  const top = rated.length ? [...rated].sort((a,b)=>b.avg-a.avg)[0] : null;
-  const decades = new Set(movies.map(m=>Math.floor(m.year/10)*10));
+  const avg = average(rated,"avg");
+  const decades = new Set(movies.map(m=>Math.floor(m.year / 10) * 10));
 
   $("#statsStrip").innerHTML = `
     <div class="stat-mini"><strong>${movies.length}</strong><span>Filme</span></div>
@@ -1280,8 +1292,6 @@ function renderStatsStrip(){
     <div class="stat-mini"><strong>${rated.length}</strong><span>Bewertet</span></div>
     <div class="stat-mini"><strong>${decades.size}</strong><span>Jahrzehnte</span></div>
   `;
-
-  return {rated, avg, top};
 }
 
 function renderFeatured(){
@@ -1352,6 +1362,7 @@ function renderOverview(){
 
 function renderTimeline(){
   const list = [...movies].sort((a,b)=>a.year-b.year);
+
   $("#timeline").innerHTML = list.map(m=>`
     <div class="t-item">
       <div class="t-year">${m.year}</div>
@@ -1382,6 +1393,7 @@ function renderGallery(){
 function populateCompare(){
   const list = [...movies].sort((a,b)=>a.title.localeCompare(b.title));
   const html = list.map(m=>`<option value="${m.id}">${esc(m.title)} (${m.year})</option>`).join("");
+
   $("#compareA").innerHTML = html;
   $("#compareB").innerHTML = html;
 
@@ -1391,11 +1403,17 @@ function populateCompare(){
 }
 
 function bar(label,val,max=100){
-  const w = val === null ? 0 : Math.max(0,Math.min(100,(val/max)*100));
+  const w = val === null || val === undefined ? 0 : Math.max(0,Math.min(100,(val / max) * 100));
+
   return `
     <div class="bar">
-      <div class="bar-label"><span>${label}</span><strong>${fmt(val,max===100 ? "%" : "")}</strong></div>
-      <div class="bar-bg"><div class="bar-fill ${cls(val,max)}" style="width:${w}%"></div></div>
+      <div class="bar-label">
+        <span>${label}</span>
+        <strong>${fmt(val,max === 100 ? "%" : "")}</strong>
+      </div>
+      <div class="bar-bg">
+        <div class="bar-fill ${cls(val,max)}" style="width:${w}%"></div>
+      </div>
     </div>
   `;
 }
@@ -1433,33 +1451,124 @@ function destroyChart(id){
   }
 }
 
-function chartOptions(title){
+function cssVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function chartBase(title){
   return {
     responsive:true,
     maintainAspectRatio:true,
     plugins:{
-      title:{display:true,text:title,color:getComputedStyle(document.documentElement).getPropertyValue("--text").trim()},
-      legend:{labels:{color:getComputedStyle(document.documentElement).getPropertyValue("--muted").trim()}}
+      title:{
+        display:true,
+        text:title,
+        color:cssVar("--text"),
+        font:{size:15,weight:"700"}
+      },
+      legend:{
+        labels:{color:cssVar("--muted")}
+      },
+      tooltip:{
+        backgroundColor:"rgba(0,0,0,.86)",
+        titleColor:"#fff",
+        bodyColor:"#fff",
+        borderColor:"rgba(255,255,255,.16)",
+        borderWidth:1
+      }
     },
     scales:{
-      x:{ticks:{color:getComputedStyle(document.documentElement).getPropertyValue("--muted").trim(), maxRotation:0, autoSkip:true, maxTicksLimit:8},grid:{color:"rgba(255,255,255,.08)"}},
-      y:{ticks:{color:getComputedStyle(document.documentElement).getPropertyValue("--muted").trim()},grid:{color:"rgba(255,255,255,.08)"},suggestedMin:0,suggestedMax:100}
+      x:{
+        ticks:{
+          color:cssVar("--muted"),
+          maxRotation:0,
+          autoSkip:true,
+          maxTicksLimit:8
+        },
+        grid:{color:"rgba(255,255,255,.09)"}
+      },
+      y:{
+        beginAtZero:true,
+        suggestedMax:100,
+        ticks:{color:cssVar("--muted")},
+        grid:{color:"rgba(255,255,255,.09)"}
+      }
     }
   };
 }
 
 function renderStats(){
   const rated = movies.filter(m=>m.avg !== null);
-  const avg = rated.length ? rated.reduce((s,m)=>s+m.avg,0) / rated.length : null;
-  const top = rated.length ? [...rated].sort((a,b)=>b.avg-a.avg)[0] : null;
+  const unrated = movies.filter(m=>m.avg === null);
   const both = movies.filter(m=>m.tristan !== null && m.vincent !== null);
-  const diff = both.length ? both.reduce((s,m)=>s+Math.abs(m.tristan-m.vincent),0) / both.length : null;
+
+  const avg = average(rated,"avg");
+  const tristanAvg = average(movies.filter(m=>m.tristan !== null),"tristan");
+  const vincentAvg = average(movies.filter(m=>m.vincent !== null),"vincent");
+  const diff = both.length ? both.reduce((s,m)=>s + Math.abs(m.tristan - m.vincent),0) / both.length : null;
+
+  const bestRT = movies.filter(m=>m.rtCritics !== null).sort((a,b)=>b.rtCritics-a.rtCritics)[0] || null;
 
   $("#statCards").innerHTML = `
     <div class="stat-card"><span>Filme insgesamt</span><strong>${movies.length}</strong></div>
-    <div class="stat-card"><span>Ø Bewertung</span><strong class="${cls(avg)}">${fmt(avg)}</strong></div>
-    <div class="stat-card"><span>Top-Film</span><strong style="font-size:1.1rem;line-height:1.15">${top ? esc(top.title) + " · " + fmt(top.avg) : "–"}</strong></div>
+    <div class="stat-card"><span>Persönlich bewertet</span><strong>${rated.length}</strong></div>
+    <div class="stat-card"><span>Unser Durchschnitt</span><strong class="${cls(avg)}">${fmt(avg)}</strong></div>
+    <div class="stat-card"><span>Unbewertet</span><strong>${unrated.length}</strong></div>
+    <div class="stat-card"><span>Tristan Ø</span><strong class="${cls(tristanAvg)}">${fmt(tristanAvg)}</strong></div>
+    <div class="stat-card"><span>Vincent Ø</span><strong class="${cls(vincentAvg)}">${fmt(vincentAvg)}</strong></div>
     <div class="stat-card"><span>Ø Abweichung T/V</span><strong>${fmt(diff)}</strong></div>
+    <div class="stat-card">
+      <span>Bester RT-Film</span>
+      <strong style="font-size:1.05rem;line-height:1.15">
+        ${bestRT ? esc(bestRT.title) + " · " + fmt(bestRT.rtCritics,"%") : "–"}
+      </strong>
+    </div>
+  `;
+
+  const topFive = [...rated].sort((a,b)=>b.avg-a.avg).slice(0,5);
+  const flopFive = [...rated].sort((a,b)=>a.avg-b.avg).slice(0,5);
+  const gapFive = movies
+    .filter(m=>m.avg !== null && m.rtCritics !== null)
+    .map(m=>({...m,gap:m.avg - m.rtCritics,absGap:Math.abs(m.avg - m.rtCritics)}))
+    .sort((a,b)=>b.absGap-a.absGap)
+    .slice(0,5);
+
+  $("#statsRankings").innerHTML = `
+    <div class="rank-list">
+      <h3>🏆 Top 5 nach unserer Wertung</h3>
+      <ol>
+        ${topFive.map(m=>`
+          <li>
+            <span>${esc(m.title)}<small>${m.year} · ${esc(m.genre || "—")}</small></span>
+            <span class="rank-score ${cls(m.avg)}">${fmt(m.avg)}</span>
+          </li>
+        `).join("")}
+      </ol>
+    </div>
+
+    <div class="rank-list">
+      <h3>💀 Flop 5 nach unserer Wertung</h3>
+      <ol>
+        ${flopFive.map(m=>`
+          <li>
+            <span>${esc(m.title)}<small>${m.year} · ${esc(m.genre || "—")}</small></span>
+            <span class="rank-score ${cls(m.avg)}">${fmt(m.avg)}</span>
+          </li>
+        `).join("")}
+      </ol>
+    </div>
+
+    <div class="rank-list">
+      <h3>⚡ Größte Differenz zu RT</h3>
+      <ol>
+        ${gapFive.map(m=>`
+          <li>
+            <span>${esc(m.title)}<small>Unser Ø ${fmt(m.avg)} · RT ${fmt(m.rtCritics,"%")}</small></span>
+            <span class="rank-score ${m.gap >= 0 ? "good" : "low"}">${m.gap >= 0 ? "+" : ""}${fmt(m.gap)}</span>
+          </li>
+        `).join("")}
+      </ol>
+    </div>
   `;
 
   if(!window.Chart) return;
@@ -1467,31 +1576,143 @@ function renderStats(){
   const chronological = [...movies].sort((a,b)=>a.year-b.year);
 
   destroyChart("years");
-  charts.years = new Chart($("#chartYears"), {
+  charts.years = new Chart($("#chartYears"),{
     type:"line",
     data:{
       labels:chronological.map(m=>`${m.title} (${m.year})`),
       datasets:[
-        {label:"Unser Ø",data:chronological.map(m=>m.avg),borderColor:"#67bd86",backgroundColor:"rgba(103,189,134,.15)",spanGaps:true,tension:.32},
-        {label:"RT Critics",data:chronological.map(m=>m.rtCritics),borderColor:"#c63d2d",backgroundColor:"rgba(198,61,45,.12)",spanGaps:true,tension:.32},
-        {label:"IMDb ×10",data:chronological.map(m=>m.imdb === null ? null : m.imdb*10),borderColor:"#d5a64f",backgroundColor:"rgba(213,166,79,.12)",spanGaps:true,tension:.32}
+        {
+          label:"Unser Ø",
+          data:chronological.map(m=>m.avg),
+          borderColor:cssVar("--green"),
+          backgroundColor:"rgba(103,189,134,.15)",
+          spanGaps:true,
+          tension:.32,
+          pointRadius:2
+        },
+        {
+          label:"RT Critics",
+          data:chronological.map(m=>m.rtCritics),
+          borderColor:cssVar("--red"),
+          backgroundColor:"rgba(198,61,45,.12)",
+          spanGaps:true,
+          tension:.32,
+          pointRadius:2
+        },
+        {
+          label:"IMDb ×10",
+          data:chronological.map(m=>m.imdb === null ? null : m.imdb * 10),
+          borderColor:cssVar("--gold"),
+          backgroundColor:"rgba(213,166,79,.12)",
+          spanGaps:true,
+          tension:.32,
+          pointRadius:2
+        }
       ]
     },
-    options:chartOptions("Bewertungsverlauf")
+    options:chartBase("Bewertungsverlauf über die Filmografie")
   });
 
-  const last = chronological.filter(m=>m.tristan !== null || m.vincent !== null).slice(-8);
+  const lastRated = chronological.filter(m=>m.tristan !== null || m.vincent !== null).slice(-10);
+
   destroyChart("people");
-  charts.people = new Chart($("#chartPeople"), {
+  charts.people = new Chart($("#chartPeople"),{
     type:"bar",
     data:{
-      labels:last.map(m=>m.title),
+      labels:lastRated.map(m=>m.title),
       datasets:[
-        {label:"Tristan",data:last.map(m=>m.tristan),backgroundColor:"#d5a64f"},
-        {label:"Vincent",data:last.map(m=>m.vincent),backgroundColor:"#45a39a"}
+        {label:"Tristan",data:lastRated.map(m=>m.tristan),backgroundColor:cssVar("--gold")},
+        {label:"Vincent",data:lastRated.map(m=>m.vincent),backgroundColor:cssVar("--teal")}
       ]
     },
-    options:chartOptions("Tristan vs. Vincent")
+    options:chartBase("Tristan vs. Vincent — letzte bewertete Filme")
+  });
+
+  const decades = {};
+  movies.forEach(m=>{
+    const d = Math.floor(m.year / 10) * 10 + "er";
+    if(!decades[d]) decades[d] = {all:0,rated:0,sum:0};
+    decades[d].all++;
+    if(m.avg !== null){
+      decades[d].rated++;
+      decades[d].sum += m.avg;
+    }
+  });
+
+  const decadeLabels = Object.keys(decades).sort();
+  const decadeAvg = decadeLabels.map(d=>{
+    const item = decades[d];
+    return item.rated ? Number((item.sum / item.rated).toFixed(1)) : null;
+  });
+
+  destroyChart("decades");
+  charts.decades = new Chart($("#chartDecades"),{
+    type:"bar",
+    data:{
+      labels:decadeLabels,
+      datasets:[
+        {
+          label:"Ø Bewertung",
+          data:decadeAvg,
+          backgroundColor:decadeAvg.map(v=>{
+            if(v === null) return cssVar("--none");
+            if(v >= 80) return cssVar("--green");
+            if(v >= 60) return cssVar("--amber");
+            return cssVar("--bad");
+          })
+        }
+      ]
+    },
+    options:chartBase("Durchschnittsbewertung nach Jahrzehnt")
+  });
+
+  const distribution = {
+    "Top ≥ 80": rated.filter(m=>m.avg >= 80).length,
+    "Solide 60–79": rated.filter(m=>m.avg >= 60 && m.avg < 80).length,
+    "Unter 60": rated.filter(m=>m.avg < 60).length,
+    "Unbewertet": unrated.length
+  };
+
+  destroyChart("distribution");
+  charts.distribution = new Chart($("#chartDistribution"),{
+    type:"doughnut",
+    data:{
+      labels:Object.keys(distribution),
+      datasets:[
+        {
+          data:Object.values(distribution),
+          backgroundColor:[
+            cssVar("--green"),
+            cssVar("--amber"),
+            cssVar("--bad"),
+            cssVar("--none")
+          ],
+          borderColor:cssVar("--panel"),
+          borderWidth:3
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:true,
+      plugins:{
+        title:{
+          display:true,
+          text:"Bewertungsverteilung",
+          color:cssVar("--text"),
+          font:{size:15,weight:"700"}
+        },
+        legend:{
+          position:"bottom",
+          labels:{color:cssVar("--muted")}
+        },
+        tooltip:{
+          backgroundColor:"rgba(0,0,0,.86)",
+          titleColor:"#fff",
+          bodyColor:"#fff"
+        }
+      }
+    }
   });
 }
 
@@ -1516,7 +1737,7 @@ function openModal(id){
   $("#modalRA").textContent = fmt(m.rtAudience,"%");
   $("#modalIM").textContent = fmt(m.imdb);
 
-  $("#againBtn").classList.toggle("hidden", !lastSurprise);
+  $("#againBtn").classList.toggle("hidden",!lastSurprise);
   $("#modalOverlay").classList.add("open");
   $("#modalOverlay").focus();
 }
@@ -1529,13 +1750,13 @@ function closeModal(){
 function surprise(){
   if(!movies.length) return;
   lastSurprise = true;
-  openModal(movies[Math.floor(Math.random()*movies.length)].id);
+  openModal(movies[Math.floor(Math.random() * movies.length)].id);
   $("#againBtn").classList.remove("hidden");
 }
 
 function switchView(view){
-  $$(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.view === view));
-  $$(".view").forEach(v=>v.classList.toggle("active", v.id === `view-${view}`));
+  $$(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view === view));
+  $$(".view").forEach(v=>v.classList.toggle("active",v.id === `view-${view}`));
 
   if(view === "stats") renderStats();
   if(view === "compare") renderCompare();
@@ -1543,8 +1764,8 @@ function switchView(view){
 
 function toggleMode(){
   gridMode = !gridMode;
-  $("#grid").classList.toggle("hidden", !gridMode);
-  $("#tableWrap").classList.toggle("hidden", gridMode);
+  $("#grid").classList.toggle("hidden",!gridMode);
+  $("#tableWrap").classList.toggle("hidden",gridMode);
   $("#modeBtn").textContent = gridMode ? "📋 Tabelle" : "🖼 Raster";
 }
 
@@ -1563,64 +1784,75 @@ function updateTimecode(){
 }
 
 function bindEvents(){
-  $("#search").addEventListener("input", renderOverview);
-  $("#decade").addEventListener("change", renderOverview);
-  $("#rating").addEventListener("change", renderOverview);
-  $("#sort").addEventListener("change", renderOverview);
-  $("#modeBtn").addEventListener("click", toggleMode);
+  $("#search").addEventListener("input",renderOverview);
+  $("#decade").addEventListener("change",renderOverview);
+  $("#rating").addEventListener("change",renderOverview);
+  $("#sort").addEventListener("change",renderOverview);
+  $("#modeBtn").addEventListener("click",toggleMode);
 
-  $$(".nav-btn").forEach(btn => btn.addEventListener("click", () => switchView(btn.dataset.view)));
+  $$(".nav-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>switchView(btn.dataset.view));
+  });
 
-  document.addEventListener("click", e=>{
+  document.addEventListener("click",e=>{
     const opener = e.target.closest("[data-open]");
     if(opener) openModal(Number(opener.dataset.open));
   });
 
-  document.addEventListener("keydown", e=>{
+  document.addEventListener("keydown",e=>{
     if(e.key === "Escape") closeModal();
+
     if((e.key === "Enter" || e.key === " ") && document.activeElement?.dataset?.open){
       e.preventDefault();
       openModal(Number(document.activeElement.dataset.open));
     }
   });
 
-  $("#closeModal").addEventListener("click", closeModal);
-  $("#backBtn").addEventListener("click", closeModal);
-  $("#modalOverlay").addEventListener("click", e=>{
+  $("#closeModal").addEventListener("click",closeModal);
+  $("#backBtn").addEventListener("click",closeModal);
+  $("#modalOverlay").addEventListener("click",e=>{
     if(e.target === $("#modalOverlay")) closeModal();
   });
 
-  $("#surpriseBtn").addEventListener("click", surprise);
-  $("#againBtn").addEventListener("click", surprise);
+  $("#surpriseBtn").addEventListener("click",surprise);
+  $("#againBtn").addEventListener("click",surprise);
 
-  $("#compareA").addEventListener("change", renderCompare);
-  $("#compareB").addEventListener("change", renderCompare);
+  $("#compareA").addEventListener("change",renderCompare);
+  $("#compareB").addEventListener("change",renderCompare);
 
-  $("#themeBtn").addEventListener("click", ()=>{
+  $("#themeBtn").addEventListener("click",()=>{
     const html = document.documentElement;
-    const current = html.dataset.theme;
-    html.dataset.theme = current === "day" ? "reel" : "day";
-    localStorage.setItem("cage-theme", html.dataset.theme);
-    renderStats();
-  });
-
-  $("#contrastBtn").addEventListener("click", ()=>{
-    const html = document.documentElement;
-    html.dataset.theme = html.dataset.theme === "contrast" ? "reel" : "contrast";
-    localStorage.setItem("cage-theme", html.dataset.theme);
+    html.dataset.theme = html.dataset.theme === "day" ? "reel" : "day";
+    localStorage.setItem("cage-theme",html.dataset.theme);
     renderStats();
   });
 
   $$("th[data-sort-col]").forEach(th=>{
-    th.addEventListener("click", ()=>{
+    th.addEventListener("click",()=>{
       const field = th.dataset.sortCol;
-      const value = field === "title" ? "title-asc" : `${field}-desc`;
-      $("#sort").value = value;
-      renderOverview();
+      let dir = field === "title" ? "asc" : "desc";
+
+      filtered = [...filtered];
+      sortList(filtered,field,dir);
+
+      $("#grid").innerHTML = "";
+      $("#tbody").innerHTML = filtered.map(m=>`
+        <tr data-open="${m.id}" tabindex="0">
+          <td><strong>${m.year}</strong></td>
+          <td>${esc(m.title)}${m.de ? `<br><small class="meta">${esc(m.de)}</small>` : ""}</td>
+          <td>${esc(m.genre || "—")}</td>
+          <td>${fmt(m.tristan)}</td>
+          <td>${fmt(m.vincent)}</td>
+          <td class="${cls(m.avg)}"><strong>${fmt(m.avg)}</strong></td>
+          <td>${fmt(m.rtCritics,"%")}</td>
+          <td>${fmt(m.rtAudience,"%")}</td>
+          <td>${fmt(m.imdb)}</td>
+        </tr>
+      `).join("");
     });
   });
 
-  addEventListener("scroll", updateTimecode, {passive:true});
+  addEventListener("scroll",updateTimecode,{passive:true});
 }
 
 function renderAll(){
@@ -1636,16 +1868,15 @@ function renderAll(){
   updateTimecode();
 }
 
-async function init(){
+function init(){
   const savedTheme = localStorage.getItem("cage-theme");
   if(savedTheme) document.documentElement.dataset.theme = savedTheme;
 
-  await loadData();
   bindEvents();
   renderAll();
 }
 
-window.addEventListener("DOMContentLoaded", init);
+window.addEventListener("DOMContentLoaded",init);
 </script>
 </body>
 </html>

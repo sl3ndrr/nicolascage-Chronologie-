@@ -1,340 +1,875 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="system">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Bald verfügbar ✨</title>
+    <title>The Cage Archive – Filmografie & Bewertungen</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* --- CSS CUSTOM PROPERTIES & THEMES --- */
+        :root {
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Light Theme (Standard-Fallback) */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-elevated: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            
+            /* Akzentfarben (Max 4) */
+            --accent-primary: #6366f1;   /* Indigo */
+            --accent-hover: #4f46e5;
+            --accent-gold: #f59e0b;      /* Amber/Gold für Bewertungen */
+            --color-good: #10b981;       /* Emerald */
+            --color-mid: #f59e0b;
+            --color-bad: #f43f5e;        /* Rose */
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg-body: #0b0f19;
+            --bg-card: #111827;
+            --bg-elevated: #1f2937;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #1e293b;
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.7);
+        }
+
+        /* High Contrast Mode (Barrierefreiheit) */
+        [data-theme="contrast"] {
+            --bg-body: #000000;
+            --bg-card: #000000;
+            --bg-elevated: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #ffff00;
+            --text-muted: #ffffff;
+            --border-color: #ffffff;
+            --accent-primary: #00ffff;
+            --accent-gold: #ffff00;
+            --color-good: #00ff00;
+            --color-mid: #ffff00;
+            --color-bad: #ff0000;
+        }
+        [data-theme="contrast"] * {
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        /* Auto-Systemerkennung */
+        @media (prefers-color-scheme: dark) {
+            :root[data-theme="system"] {
+                --bg-body: #0b0f19;
+                --bg-card: #111827;
+                --bg-elevated: #1f2937;
+                --text-primary: #f8fafc;
+                --text-secondary: #94a3b8;
+                --text-muted: #64748b;
+                --border-color: #1e293b;
+            }
+        }
+
+        /* --- BASE STYLES & RESETS --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Nunito', sans-serif;
-            overflow: hidden;
-            position: relative;
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
+            padding-bottom: 4rem;
+        }
+        a { color: inherit; text-decoration: none; }
+        button, input, select { font: inherit; background: none; border: none; color: inherit; }
+        button { cursor: pointer; }
+        
+        /* Barrierefreiheit: Fokus-Stile */
+        :focus-visible {
+            outline: 3px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+        .sr-only {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;
         }
 
-        /* Hintergrund-Animation: schwebende Formen */
-        .bg-shapes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 0;
+        /* --- LAYOUT & NAVIGATION --- */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+        
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 50;
+            backdrop-filter: blur(8px);
+            background-color: rgba(var(--bg-card), 0.9);
         }
-
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.15;
-            animation: float 8s infinite ease-in-out;
+        .header-content {
+            display: flex; justify-content: space-between; align-items: center;
+            height: 4.5rem; gap: 1rem;
         }
-
-        .shape:nth-child(1) {
-            width: 200px;
-            height: 200px;
-            background: #ff9a9e;
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
+        .logo {
+            font-weight: 800; font-size: 1.25rem; letter-spacing: -0.025em;
+            display: flex; align-items: center; gap: 0.5rem;
         }
-
-        .shape:nth-child(2) {
-            width: 300px;
-            height: 300px;
-            background: #fad0c4;
-            bottom: 15%;
-            right: 10%;
-            animation-delay: 2s;
+        .logo-badge {
+            background: var(--accent-primary); color: #fff;
+            padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase;
         }
-
-        .shape:nth-child(3) {
-            width: 150px;
-            height: 150px;
-            background: #a18cd1;
-            top: 60%;
-            left: 70%;
-            animation-delay: 4s;
+        
+        nav { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 2px; }
+        .nav-btn {
+            padding: 0.5rem 1rem; border-radius: 6px; font-weight: 500; font-size: 0.875rem;
+            color: var(--text-secondary); transition: var(--transition);
+            white-space: nowrap;
         }
-
-        .shape:nth-child(4) {
-            width: 250px;
-            height: 250px;
-            background: #fbc2eb;
-            top: 20%;
-            right: 20%;
-            animation-delay: 1s;
+        .nav-btn:hover, .nav-btn.active {
+            background-color: var(--bg-elevated); color: var(--text-primary);
         }
+        .nav-btn.active { font-weight: 600; border-bottom: 2px solid var(--accent-primary); }
 
-        .shape:nth-child(5) {
-            width: 180px;
-            height: 180px;
-            background: #a6c1ee;
-            bottom: 30%;
-            left: 15%;
-            animation-delay: 3s;
+        .header-actions { display: flex; gap: 0.5rem; align-items: center; }
+        .icon-btn {
+            padding: 0.5rem; border-radius: 6px; background: var(--bg-elevated);
+            color: var(--text-secondary); transition: var(--transition); display: flex;
         }
+        .icon-btn:hover { color: var(--text-primary); transform: translateY(-1px); }
 
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg) scale(1);
-            }
-            50% {
-                transform: translateY(-30px) rotate(180deg) scale(1.1);
-            }
+        /* --- HERO: FILM DES TAGES --- */
+        .motd-banner {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px; margin: 2rem 0; padding: 1.5rem;
+            display: grid; grid-template-columns: 100px 1fr auto; gap: 1.5rem; align-items: center;
+            box-shadow: var(--shadow-md); position: relative; overflow: hidden;
         }
-
-        /* Hauptcontainer */
-        .container {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            padding: 3rem 2rem;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            border-radius: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            max-width: 600px;
-            width: 90%;
-            animation: containerAppear 1s ease-out;
+        .motd-badge {
+            position: absolute; top: 1rem; right: 1rem;
+            background: var(--accent-gold); color: #000; font-size: 0.75rem; font-weight: 700;
+            padding: 0.25rem 0.75rem; border-radius: 999px; text-transform: uppercase;
         }
+        .motd-poster { width: 100px; height: 150px; object-fit: cover; border-radius: 8px; }
+        .motd-info h2 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .motd-meta { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.75rem; }
 
-        @keyframes containerAppear {
-            0% {
-                opacity: 0;
-                transform: scale(0.8) translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+        /* --- FILTER & SEARCH BAR --- */
+        .controls-bar {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 1rem; margin-bottom: 2rem;
+            display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;
         }
-
-        /* Emoji-Animation */
-        .emoji-bounce {
-            font-size: 5rem;
-            display: inline-block;
-            animation: bounce 2s infinite;
+        .search-box {
+            display: flex; align-items: center; background: var(--bg-elevated);
+            border-radius: 6px; padding: 0.5rem 0.75rem; flex: 1; min-width: 250px;
+            border: 1px solid transparent;
         }
-
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
+        .search-box:focus-within { border-color: var(--accent-primary); }
+        .search-box input { width: 100%; margin-left: 0.5rem; outline: none; }
+        
+        .filter-group { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+        .select-input {
+            background: var(--bg-elevated); padding: 0.5rem 0.75rem; border-radius: 6px;
+            font-size: 0.875rem; color: var(--text-primary); border: 1px solid var(--border-color);
         }
+        
+        /* --- VIEWS & SECTIONS --- */
+        .view-section { display: none; animation: fadeIn 0.3s ease-out; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Titel */
-        h1 {
-            font-family: 'Fredoka One', cursive;
-            font-size: 3rem;
-            color: #fff;
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            margin: 0.5rem 0;
-            letter-spacing: 2px;
+        /* OVERVIEW: CARDS GRID */
+        .movies-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;
         }
-
-        .highlight {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            padding: 0.2rem 0.8rem;
-            border-radius: 50px;
-            display: inline-block;
+        .movie-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 10px; overflow: hidden; transition: var(--transition);
+            display: flex; flex-direction: column; cursor: pointer; position: relative;
         }
-
-        /* Untertitel */
-        p {
-            font-size: 1.3rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin: 1rem 0 2rem;
-            line-height: 1.6;
+        .movie-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--text-muted); }
+        .poster-wrapper { position: relative; aspect-ratio: 2/3; background: var(--bg-elevated); overflow: hidden; }
+        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .movie-card:hover .poster-wrapper img { transform: scale(1.03); }
+        
+        .badge-avg {
+            position: absolute; top: 0.5rem; right: 0.5rem;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px);
+            color: #fff; font-weight: 700; font-size: 0.875rem;
+            padding: 0.25rem 0.5rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);
         }
+        .card-content { padding: 1rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem; line-height: 1.3; }
+        .card-sub { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+        .card-ratings { display: flex; justify-content: space-between; font-size: 0.75rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem; }
+        .rating-item { display: flex; flex-direction: column; align-items: center; }
+        .rating-val { font-weight: 700; }
 
-        /* Ladebalken */
-        .progress-bar {
-            width: 80%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
-            margin: 1.5rem auto;
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* OVERVIEW: TABLE */
+        .table-responsive { overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-card); }
+        .movies-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
+        .movies-table th, .movies-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); }
+        .movies-table th { background: var(--bg-elevated); font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+        .movies-table tr:hover { background: var(--bg-elevated); cursor: pointer; }
+
+        /* TIMELINE VIEW */
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; padding: 2rem 0; }
+        .timeline::before { content: ''; position: absolute; left: 50%; width: 2px; height: 100%; background: var(--border-color); }
+        .timeline-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; position: relative; }
+        .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+        .timeline-content { width: 45%; background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer; transition: var(--transition); }
+        .timeline-content:hover { transform: scale(1.02); border-color: var(--accent-primary); }
+        .timeline-year { position: absolute; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: #fff; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: 700; font-size: 0.75rem; }
+
+        /* GALLERY VIEW */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+        .gallery-item { aspect-ratio: 2/3; border-radius: 8px; overflow: hidden; position: relative; cursor: pointer; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.8); opacity: 0; transition: var(--transition); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; text-align: center; color: #fff; }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+        /* COMPARISON VIEW */
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem; }
+        .compare-col { background: var(--bg-card); padding: 1.5rem; border-radius: 10px; border: 1px solid var(--border-color); }
+        .bar-chart-row { margin-bottom: 1rem; }
+        .bar-label { display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.25rem; }
+        .bar-bg { width: 100%; height: 8px; background: var(--bg-elevated); border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--accent-primary); transition: width 0.5s ease-out; }
+
+        /* STATS VIEW */
+        .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--bg-card); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        .stat-val { font-size: 2rem; font-weight: 800; color: var(--accent-primary); margin-top: 0.5rem; }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
+        .chart-container { background: var(--bg-card); padding: 1.5rem; border-radius: 10px; border: 1px solid var(--border-color); }
+
+        /* --- MODAL (DETAIL & SURPRISE) --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            z-index: 100; display: none; justify-content: center; align-items: center; padding: 1rem;
+            opacity: 0; transition: opacity 0.2s;
         }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #f093fb, #f5576c, #ffecd2);
-            border-radius: 50px;
-            animation: loading 3s infinite ease-in-out;
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .modal {
+            background: var(--bg-card); width: 100%; max-width: 700px; border-radius: 12px;
+            border: 1px solid var(--border-color); overflow: hidden; box-shadow: var(--shadow-lg);
+            display: grid; grid-template-columns: 250px 1fr; max-height: 90vh;
         }
+        .modal-poster { width: 100%; height: 100%; object-fit: cover; background: var(--bg-elevated); }
+        .modal-body { padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; justify-content: space-between; }
+        .modal-close { align-self: flex-end; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
 
-        @keyframes loading {
-            0% {
-                width: 0%;
-                margin-left: 0;
-            }
-            50% {
-                width: 70%;
-                margin-left: 15%;
-            }
-            100% {
-                width: 0%;
-                margin-left: 100%;
-            }
+        /* --- FLOATING ACTION BUTTON --- */
+        .fab {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 40;
+            background: var(--accent-primary); color: #fff; padding: 0.75rem 1.25rem;
+            border-radius: 999px; font-weight: 600; box-shadow: var(--shadow-lg);
+            display: flex; align-items: center; gap: 0.5rem; transition: var(--transition);
         }
+        .fab:hover { background: var(--accent-hover); transform: scale(1.05); }
 
-        /* Countdown / Status */
-        .status {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 2rem 0;
-            flex-wrap: wrap;
-        }
-
-        .status-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            color: #fff;
-            font-weight: 700;
-            font-size: 1rem;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: pulse 2s infinite;
-        }
-
-        .status-item:nth-child(2) {
-            animation-delay: 0.5s;
-        }
-
-        .status-item:nth-child(3) {
-            animation-delay: 1s;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 0.8;
-            }
-            50% {
-                transform: scale(1.05);
-                opacity: 1;
-            }
-        }
-
-        /* Social / Info */
-        .social-hint {
-            margin-top: 2rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.95rem;
-        }
-
-        .social-hint a {
-            color: #fff;
-            text-decoration: none;
-            border-bottom: 2px dotted rgba(255, 255, 255, 0.5);
-            transition: all 0.3s;
-        }
-
-        .social-hint a:hover {
-            border-bottom-color: #fff;
-        }
-
-        /* Kleine verspielte Icons */
-        .sparkles {
-            font-size: 2rem;
-            animation: sparkle 1.5s infinite;
-        }
-
-        @keyframes sparkle {
-            0%, 100% {
-                opacity: 0.3;
-                transform: scale(0.8);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.2);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 500px) {
-            h1 {
-                font-size: 2rem;
-            }
-            .emoji-bounce {
-                font-size: 3.5rem;
-            }
-            p {
-                font-size: 1rem;
-            }
-            .status {
-                gap: 1rem;
-            }
-            .status-item {
-                padding: 0.5rem 1rem;
-                font-size: 0.85rem;
-            }
+        /* --- COLOR CODING CLASSES --- */
+        .color-high { color: var(--color-good) !important; font-weight: bold; }
+        .color-mid { color: var(--color-mid) !important; font-weight: bold; }
+        .color-low { color: var(--color-bad) !important; font-weight: bold; }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .motd-banner { grid-template-columns: 1fr; text-align: center; }
+            .motd-poster { margin: 0 auto; }
+            .modal { grid-template-columns: 1fr; }
+            .modal-poster { max-height: 300px; }
+            .compare-grid { grid-template-columns: 1fr; }
+            .timeline::before { left: 0; }
+            .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; align-items: flex-start; padding-left: 1.5rem; }
+            .timeline-content { width: 100%; }
+            .timeline-year { left: 0; transform: none; }
+            .charts-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Hintergrund-Formen -->
-    <div class="bg-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <span>THE CAGE ARCHIVE</span>
+                <span class="logo-badge">Est. 1981</span>
+            </a>
+            <nav role="navigation" aria-label="Hauptnavigation">
+                <button class="nav-btn active" onclick="switchView('overview')">Übersicht</button>
+                <button class="nav-btn" onclick="switchView('timeline')">Zeitstrahl</button>
+                <button class="nav-btn" onclick="switchView('gallery')">Poster Wall</button>
+                <button class="nav-btn" onclick="switchView('compare')">Vergleich</button>
+                <button class="nav-btn" onclick="switchView('stats')">Statistiken</button>
+            </nav>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleTheme()" aria-label="Theme wechseln" title="Light/Dark Mode">🌓</button>
+                <button class="icon-btn" onclick="toggleContrast()" aria-label="Kontrastmodus" title="Hoher Kontrast">👁️</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <section class="motd-banner" id="motd-container" aria-label="Film des Tages">
+            </section>
+
+        <div class="controls-bar" role="search">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="search-input" placeholder="Suche nach Titel, Jahr oder Genre..." aria-label="Filme durchsuchen">
+            </div>
+            <div class="filter-group">
+                <select class="select-input" id="filter-decade" aria-label="Nach Jahrzehnt filtern">
+                    <option value="all">Alle Jahrzehnte</option>
+                    <option value="1980">1980er</option>
+                    <option value="1990">1990er</option>
+                    <option value="2000">2000er</option>
+                    <option value="2010">2010er</option>
+                    <option value="2020">2020er</option>
+                </select>
+                <select class="select-input" id="filter-rating" aria-label="Nach Bewertung filtern">
+                    <option value="all">Alle Bewertungen</option>
+                    <option value="top">Top-Filme (≥ 8.0)</option>
+                    <option value="mid">Mittelmaß (6.0 - 7.9)</option>
+                    <option value="flop">Flops (< 6.0)</option>
+                </select>
+                <select class="select-input" id="sort-by" aria-label="Sortierung">
+                    <option value="year-desc">Jahr (Neueste zuerst)</option>
+                    <option value="year-asc">Jahr (Älteste zuerst)</option>
+                    <option value="avg-desc">Unser Ø (Höchste)</option>
+                    <option value="rt-desc">Rotten Tomatoes (Höchste)</option>
+                    <option value="title-asc">Titel (A-Z)</option>
+                </select>
+                <button class="icon-btn" id="view-toggle-btn" onclick="toggleOverviewMode()" aria-label="Ansicht zwischen Raster und Tabelle wechseln" title="Tabelle/Raster">📋 Tabelle</button>
+            </div>
+        </div>
+
+        <section id="view-overview" class="view-section active">
+            <div id="grid-container" class="movies-grid"></div>
+            <div id="table-container" class="table-responsive" style="display: none;">
+                <table class="movies-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortData('year')">Jahr ↕</th>
+                            <th onclick="sortData('title')">Titel ↕</th>
+                            <th>Genre</th>
+                            <th onclick="sortData('tristan')">Tristan ↕</th>
+                            <th onclick="sortData('vincent')">Vincent ↕</th>
+                            <th onclick="sortData('avg')">Unser Ø ↕</th>
+                            <th onclick="sortData('rt')">RT ↕</th>
+                            <th onclick="sortData('imdb')">IMDb ↕</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="view-timeline" class="view-section">
+            <div class="timeline" id="timeline-container"></div>
+        </section>
+
+        <section id="view-gallery" class="view-section">
+            <div class="gallery-grid" id="gallery-container"></div>
+        </section>
+
+        <section id="view-compare" class="view-section">
+            <div class="controls-bar" style="justify-content: center;">
+                <select class="select-input" id="comp-select-1" onchange="renderComparison()"></select>
+                <span style="font-weight: bold;">VS</span>
+                <select class="select-input" id="comp-select-2" onchange="renderComparison()"></select>
+            </div>
+            <div class="compare-grid" id="compare-container"></div>
+        </section>
+
+        <section id="view-stats" class="view-section">
+            <div class="stats-cards" id="stats-cards-container"></div>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <canvas id="chart-timeline"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-compare"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-decades"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <button class="fab" onclick="showSurpriseMovie()" aria-label="Zufälligen Film anzeigen">
+        <span>🎲</span> Überraschungsfilm
+    </button>
+
+    <div class="modal-overlay" id="movie-modal" role="dialog" aria-modal="true" tabindex="-1">
+        <div class="modal">
+            <img src="" alt="" class="modal-poster" id="modal-img">
+            <div class="modal-body">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <span id="modal-year" class="logo-badge" style="margin-bottom: 0.5rem; display: inline-block;"></span>
+                        <span class="modal-close" onclick="closeModal()" aria-label="Schließen">✕</span>
+                    </div>
+                    <h2 id="modal-title" style="font-size: 1.75rem; margin-bottom: 0.25rem;"></h2>
+                    <p id="modal-title-de" style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;"></p>
+                    <p id="modal-genre" style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.5rem;"></p>
+                    
+                    <div style="background: var(--bg-elevated); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h3 style="font-size: 0.875rem; text-transform: uppercase; margin-bottom: 0.75rem; color: var(--text-muted);">Bewertungs-Breakdown</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.875rem;">
+                            <div>👤 Tristan: <strong id="modal-tristan"></strong>/10</div>
+                            <div>👤 Vincent: <strong id="modal-vincent"></strong>/10</div>
+                            <div style="grid-column: span 2; border-top: 1px solid var(--border-color); padding-top: 0.5rem;">
+                                <span>⭐ Unser Durchschnitt: </span><strong id="modal-avg" style="font-size: 1.1rem;"></strong>/10
+                            </div>
+                            <div>🍅 Rotten Tomatoes: <strong id="modal-rt"></strong>%</div>
+                            <div>🎬 IMDb: <strong id="modal-imdb"></strong>/10</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button id="btn-modal-again" class="select-input" style="display: none; background: var(--accent-primary); color: #fff;" onclick="showSurpriseMovie()">Nochmal 🎲</button>
+                    <button class="select-input" onclick="closeModal()">Zurück zur Übersicht</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Hauptcontainer -->
-    <div class="container">
-        <div class="emoji-bounce">🚧</div>
-        <h1>Bald <span class="highlight">startklar</span>!</h1>
-        <p>
-            Wir arbeiten mit 💛 daran,<br>
-            etwas ganz Besonderes für dich zu zaubern.
-        </p>
+    <script>
+        /* --- KONSTANTEN & STATE --- */
+        // ERSETZE DIESEN LINK MIT DER RAW-URL DEINER GITHUB TSV-DATEI:
+        const DATA_URL = "https://raw.githubusercontent.com/sl3ndrr/nicolascage-Chronologie-/main/cage_movies.tsv";
+        
+        // Fallback-Daten, falls der GitHub-Fetch (z.B. lokal ohne Server) fehlschlägt
+        const FALLBACK_TSV = `Jahr\tOriginaltitel\tDeutscher Titel\tGenre\tTristans Wertung\tVincent Wertung\tUnser Durchschnitt\tRotten Tomatoes Score\tIMDb Score\tLink zum Filmplakat/Cover
+1995\tLeaving Las Vegas\tLeaving Las Vegas\tDrama, Romance\t9.5\t9.0\t9.3\t91\t7.5\thttps://image.tmdb.org/t/p/w500/8d8g7m0v2N9c6c398y508412854.jpg
+1996\tThe Rock\tThe Rock - Fels der Entscheidung\tAction, Thriller\t8.5\t9.0\t8.8\t68\t7.4\thttps://image.tmdb.org/t/p/w500/kEN3M6J7L3W83p8x0q013264663.jpg
+1997\tFace/Off\tIm Körper des Feindes\tAction, Sci-Fi\t9.0\t9.5\t9.3\t93\t7.3\thttps://image.tmdb.org/t/p/w500/100085848383281983.jpg
+1997\tCon Air\tCon Air\tAction, Thriller\t8.0\t8.5\t8.3\t58\t6.9\thttps://image.tmdb.org/t/p/w500/c702808248383281983.jpg
+2004\tNational Treasure\tDas Vermächtnis der Tempelritter\tAdventure, Mystery\t7.5\t8.0\t7.8\t46\t6.9\thttps://image.tmdb.org/t/p/w500/300085848383281983.jpg
+2007\tGhost Rider\tGhost Rider\tAction, Fantasy\t5.0\t4.5\t4.8\t27\t5.3\thttps://image.tmdb.org/t/p/w500/800085848383281983.jpg
+2010\tKick-Ass\tKick-Ass\tAction, Comedy\t8.5\t8.5\t8.5\t77\t7.6\thttps://image.tmdb.org/t/p/w500/700085848383281983.jpg
+2018\tMandy\tMandy\tHorror, Thriller\t9.0\t8.0\t8.5\t90\t6.5\thttps://image.tmdb.org/t/p/w500/600085848383281983.jpg
+2021\tPig\tPig\tDrama, Thriller\t9.5\t9.5\t9.5\t97\t6.9\thttps://image.tmdb.org/t/p/w500/500085848383281983.jpg
+2022\tThe Unbearable Weight of Massive Talent\tMassive Talent\tComedy, Action\t8.5\t8.5\t8.5\t87\t7.0\thttps://image.tmdb.org/t/p/w500/400085848383281983.jpg
+2023\tDream Scenario\tDream Scenario\tComedy, Fantasy\t8.0\t8.0\t8.0\t91\t6.9\thttps://image.tmdb.org/t/p/w500/200085848383281983.jpg
+2024\tLonglegs\tLonglegs\tHorror, Thriller\t8.5\t9.0\t8.8\t86\t6.8\thttps://image.tmdb.org/t/p/w500/100085848383281983.jpg`;
 
-        <!-- Ladebalken -->
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
-        </div>
+        let movies = [];
+        let isGridView = true;
+        let chartInstances = {};
 
-        <!-- Status -->
-        <div class="status">
-            <span class="status-item">🎨 Design</span>
-            <span class="status-item">⚡ Entwicklung</span>
-            <span class="status-item">🚀 Launch</span>
-        </div>
+        /* --- INITIALISIERUNG & DATEN-PARSING --- */
+        async function init() {
+            try {
+                const response = await fetch(DATA_URL);
+                if (!response.ok) throw new Error("Netzwerkfehler");
+                const text = await response.text();
+                parseTSV(text);
+            } catch (error) {
+                console.warn("GitHub-Fetch fehlgeschlagen, lade Fallback-Daten.", error);
+                parseTSV(FALLBACK_TSV);
+            }
+            setupEventListeners();
+            renderAll();
+        }
 
-        <!-- Verspielte Info -->
-        <div class="social-hint">
-            <span class="sparkles">✨</span> 
-            In Kürze erstrahlt hier eine neue Welt. 
-            <span class="sparkles">✨</span><br>
-            <span style="opacity:0.6;">Bis dahin: </span>
-            <a href="#">📬 Benachrichtige mich</a>
-        </div>
-    </div>
+        function parseTSV(text) {
+            const lines = text.trim().replace(/\r/g, '').split('\n');
+            movies = lines.slice(1).map((line, index) => {
+                const cols = line.split('\t');
+                return {
+                    id: index,
+                    year: parseInt(cols[0], 10) || 0,
+                    titleOrig: cols[1]?.trim() || 'Unbekannt',
+                    titleDe: cols[2]?.trim() || '',
+                    genre: cols[3]?.trim() || '',
+                    tristan: parseFloat(cols[4]) || 0,
+                    vincent: parseFloat(cols[5]) || 0,
+                    avg: parseFloat(cols[6]) || 0,
+                    rt: parseInt(cols[7], 10) || 0,
+                    imdb: parseFloat(cols[8]) || 0,
+                    poster: cols[9]?.trim() || ''
+                };
+            }).filter(m => m.year > 0);
+        }
 
+        /* --- EVENT LISTENERS & FILTER LOGIK --- */
+        function setupEventListeners() {
+            document.getElementById('search-input').addEventListener('input', renderOverview);
+            document.getElementById('filter-decade').addEventListener('change', renderOverview);
+            document.getElementById('filter-rating').addEventListener('change', renderOverview);
+            document.getElementById('sort-by').addEventListener('change', () => {
+                const [field, order] = document.getElementById('sort-by').value.split('-');
+                sortMovies(field, order);
+                renderOverview();
+            });
+            // Escape-Taste zum Schließen von Modals
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        }
+
+        function getFilteredMovies() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const decade = document.getElementById('filter-decade').value;
+            const rating = document.getElementById('filter-rating').value;
+
+            return movies.filter(m => {
+                const matchQuery = m.titleOrig.toLowerCase().includes(query) || 
+                                 m.titleDe.toLowerCase().includes(query) || 
+                                 m.year.toString().includes(query) ||
+                                 m.genre.toLowerCase().includes(query);
+                const matchDecade = decade === 'all' || Math.floor(m.year / 10) * 10 === parseInt(decade, 10);
+                let matchRating = true;
+                if (rating === 'top') matchRating = m.avg >= 8.0;
+                if (rating === 'mid') matchRating = m.avg >= 6.0 && m.avg < 8.0;
+                if (rating === 'flop') matchRating = m.avg < 6.0;
+
+                return matchQuery && matchDecade && matchRating;
+            });
+        }
+
+        function sortMovies(field, order) {
+            movies.sort((a, b) => {
+                let valA = a[field], valB = b[field];
+                if (field === 'title') { valA = a.titleOrig; valB = b.titleOrig; }
+                if (valA < valB) return order === 'asc' ? -1 : 1;
+                if (valA > valB) return order === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function sortData(field) {
+            // Hilfsfunktion für Klick auf Tabellen-Header
+            sortMovies(field, 'desc');
+            renderOverview();
+        }
+
+        /* --- RENDER FUNKTIONEN --- */
+        function renderAll() {
+            sortMovies('year', 'desc');
+            renderMovieOfDay();
+            renderOverview();
+            renderTimeline();
+            renderGallery();
+            populateCompareSelects();
+            renderComparison();
+            renderStats();
+        }
+
+        // 1. Film des Tages (basiert deterministisch auf dem Datum)
+        function renderMovieOfDay() {
+            if (movies.length === 0) return;
+            const today = new Date().toISOString().slice(0, 10);
+            let hash = 0;
+            for (let i = 0; i < today.length; i++) hash = ((hash << 5) - hash) + today.charCodeAt(i);
+            const motd = movies[Math.abs(hash) % movies.length];
+
+            const container = document.getElementById('motd-container');
+            container.innerHTML = `
+                <span class="motd-badge">🌟 Film des Tages</span>
+                <img src="${motd.poster}" alt="${motd.titleOrig}" class="motd-poster" onerror="this.src=getFallbackImage('${motd.titleOrig}')">
+                <div class="motd-info">
+                    <h2>${motd.titleOrig}</h2>
+                    <div class="motd-meta">${motd.year} | ${motd.genre} | ${motd.titleDe}</div>
+                    <p>Unser Durchschnitt: <strong class="${getColorClass(motd.avg)}">${motd.avg} / 10</strong> | Rotten Tomatoes: <strong>${motd.rt}%</strong></p>
+                </div>
+                <button class="select-input" style="background: var(--accent-primary); color: #fff; align-self: center;" onclick="openModal(${motd.id})">Details ansehen</button>
+            `;
+        }
+
+        // 2. Übersicht (Grid oder Tabelle)
+        function renderOverview() {
+            const filtered = getFilteredMovies();
+            const grid = document.getElementById('grid-container');
+            const tbody = document.getElementById('table-body');
+
+            // Render Grid
+            grid.innerHTML = filtered.map(m => `
+                <div class="movie-card" onclick="openModal(${m.id})" tabindex="0" role="button" aria-label="${m.titleOrig} Details anzeigen">
+                    <div class="poster-wrapper">
+                        <span class="badge-avg ${getColorClass(m.avg)}">★ ${m.avg}</span>
+                        <img src="${m.poster}" alt="${m.titleOrig}" loading="lazy" onerror="this.src=getFallbackImage('${m.titleOrig}')">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <div class="card-title">${m.titleOrig}</div>
+                            <div class="card-sub">${m.year} • ${m.genre.split(',')[0]}</div>
+                        </div>
+                        <div class="card-ratings">
+                            <div class="rating-item"><span>Tristan</span><span class="rating-val">${m.tristan}</span></div>
+                            <div class="rating-item"><span>Vincent</span><span class="rating-val">${m.vincent}</span></div>
+                            <div class="rating-item"><span>RT</span><span class="rating-val">${m.rt}%</span></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Table
+            tbody.innerHTML = filtered.map(m => `
+                <tr onclick="openModal(${m.id})" tabindex="0">
+                    <td><strong>${m.year}</strong></td>
+                    <td>${m.titleOrig}<br><small style="color: var(--text-muted);">${m.titleDe}</small></td>
+                    <td>${m.genre}</td>
+                    <td>${m.tristan}</td>
+                    <td>${m.vincent}</td>
+                    <td class="${getColorClass(m.avg)}"><strong>${m.avg}</strong></td>
+                    <td>${m.rt}%</td>
+                    <td>${m.imdb}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 3. Zeitstrahl
+        function renderTimeline() {
+            const sortedByYear = [...movies].sort((a, b) => a.year - b.year);
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = sortedByYear.map(m => `
+                <div class="timeline-item">
+                    <div class="timeline-year">${m.year}</div>
+                    <div class="timeline-content" onclick="openModal(${m.id})">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <img src="${m.poster}" style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;" onerror="this.src=getFallbackImage('${m.titleOrig}')">
+                            <div>
+                                <h4 style="margin-bottom: 0.25rem;">${m.titleOrig}</h4>
+                                <span class="${getColorClass(m.avg)}">★ ${m.avg}/10</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.5rem;">(RT: ${m.rt}%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 4. Galerie / Poster Wall
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = movies.map(m => `
+                <div class="gallery-item" onclick="openModal(${m.id})">
+                    <img src="${m.poster}" alt="${m.titleOrig}" loading="lazy" onerror="this.src=getFallbackImage('${m.titleOrig}')">
+                    <div class="gallery-overlay">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">${m.titleOrig}</h4>
+                        <span class="logo-badge ${getColorClass(m.avg)}">★ ${m.avg}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 5. Vergleichs-Tool
+        function populateCompareSelects() {
+            const s1 = document.getElementById('comp-select-1');
+            const s2 = document.getElementById('comp-select-2');
+            const options = movies.map(m => `<option value="${m.id}">${m.titleOrig} (${m.year})</option>`).join('');
+            s1.innerHTML = options;
+            s2.innerHTML = options;
+            if (movies.length > 1) s2.selectedIndex = 1;
+        }
+
+        function renderComparison() {
+            const id1 = document.getElementById('comp-select-1').value;
+            const id2 = document.getElementById('comp-select-2').value;
+            const m1 = movies.find(m => m.id == id1);
+            const m2 = movies.find(m => m.id == id2);
+            if (!m1 || !m2) return;
+
+            const container = document.getElementById('compare-container');
+            const renderCol = (m) => `
+                <div class="compare-col">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center;">
+                        <img src="${m.poster}" style="width: 80px; height: 120px; object-fit: cover; border-radius: 6px;" onerror="this.src=getFallbackImage('${m.titleOrig}')">
+                        <div>
+                            <h3>${m.titleOrig} (${m.year})</h3>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">${m.genre}</p>
+                        </div>
+                    </div>
+                    ${renderBar("Tristans Wertung", m.tristan, 10, "var(--accent-primary)")}
+                    ${renderBar("Vincents Wertung", m.vincent, 10, "var(--accent-gold)")}
+                    ${renderBar("Unser Durchschnitt", m.avg, 10, "var(--color-good)")}
+                    ${renderBar("Rotten Tomatoes", m.rt, 100, "#ef4444")}
+                    ${renderBar("IMDb Score", m.imdb, 10, "#f59e0b")}
+                </div>
+            `;
+            container.innerHTML = renderCol(m1) + renderCol(m2);
+        }
+
+        function renderBar(label, val, max, color) {
+            const pct = (val / max) * 100;
+            return `
+                <div class="bar-chart-row">
+                    <div class="bar-label"><span>${label}</span><strong>${val}${max===100?'%':''}</strong></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%; background-color: ${color};"></div></div>
+                </div>
+            `;
+        }
+
+        // 6. Statistiken & Chart.js
+        function renderStats() {
+            // KPIs berechnen
+            const total = movies.length;
+            const avgAll = (movies.reduce((acc, m) => acc + m.avg, 0) / total).toFixed(1);
+            const maxMovie = [...movies].sort((a,b) => b.avg - a.avg)[0];
+            const minMovie = [...movies].sort((a,b) => a.avg - b.avg)[0];
+            const diffAvg = (movies.reduce((acc, m) => acc + Math.abs(m.tristan - m.vincent), 0) / total).toFixed(2);
+
+            document.getElementById('stats-cards-container').innerHTML = `
+                <div class="stat-card"><div>Gesehene Filme</div><div class="stat-val">${total}</div></div>
+                <div class="stat-card"><div>Gesamt-Durchschnitt</div><div class="stat-val ${getColorClass(avgAll)}">${avgAll}</div></div>
+                <div class="stat-card"><div>Höchste Wertung</div><div class="stat-val" style="font-size:1.2rem; margin-top:0.8rem;">${maxMovie.titleOrig} (${maxMovie.avg})</div></div>
+                <div class="stat-card"><div>Ø Abweichung (T vs V)</div><div class="stat-val" style="color: var(--accent-gold);">${diffAvg} Pkt.</div></div>
+            `;
+
+            // Chart 1: Bewertungsverlauf (Chronologisch)
+            const sortedChron = [...movies].sort((a,b) => a.year - b.year);
+            destroyChart('chart-timeline');
+            chartInstances['chart-timeline'] = new Chart(document.getElementById('chart-timeline'), {
+                type: 'line',
+                data: {
+                    labels: sortedChron.map(m => `${m.titleOrig} (${m.year})`),
+                    datasets: [
+                        { label: 'Unser Ø', data: sortedChron.map(m => m.avg), borderColor: '#10b981', tension: 0.3 },
+                        { label: 'IMDb', data: sortedChron.map(m => m.imdb), borderColor: '#6366f1', tension: 0.3 },
+                        { label: 'RT (/10)', data: sortedChron.map(m => m.rt/10), borderColor: '#f59e0b', tension: 0.3 }
+                    ]
+                },
+                options: { responsive: true, plugins: { title: { display: true, text: 'Bewertungsverlauf über Filme hinweg' } } }
+            });
+
+            // Chart 2: Tristan vs Vincent Radar
+            destroyChart('chart-compare');
+            chartInstances['chart-compare'] = new Chart(document.getElementById('chart-compare'), {
+                type: 'bar',
+                data: {
+                    labels: sortedChron.slice(-6).map(m => m.titleOrig), // Letzte 6 Filme
+                    datasets: [
+                        { label: 'Tristan', data: sortedChron.slice(-6).map(m => m.tristan), backgroundColor: '#6366f1' },
+                        { label: 'Vincent', data: sortedChron.slice(-6).map(m => m.vincent), backgroundColor: '#f59e0b' }
+                    ]
+                },
+                options: { responsive: true, plugins: { title: { display: true, text: 'Tristan vs. Vincent (Letzte 6 Filme)' } } }
+            });
+
+            // Chart 3: Jahrzehnte
+            const decades = {};
+            movies.forEach(m => {
+                const dec = Math.floor(m.year / 10) * 10 + 'er';
+                if(!decades[dec]) decades[dec] = [];
+                decades[dec].push(m.avg);
+            });
+            const decLabels = Object.keys(decades).sort();
+            const decData = decLabels.map(d => (decades[d].reduce((a,b)=>a+b,0) / decades[d].length).toFixed(1));
+
+            destroyChart('chart-decades');
+            chartInstances['chart-decades'] = new Chart(document.getElementById('chart-decades'), {
+                type: 'bar',
+                data: {
+                    labels: decLabels,
+                    datasets: [{ label: 'Ø Bewertung', data: decData, backgroundColor: '#10b981' }]
+                },
+                options: { responsive: true, plugins: { title: { display: true, text: 'Durchschnittsbewertung nach Jahrzehnt' } } }
+            });
+        }
+
+        function destroyChart(id) {
+            if (chartInstances[id]) { chartInstances[id].destroy(); }
+        }
+
+        /* --- UI HILFSFUNKTIONEN --- */
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`view-${viewId}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function toggleOverviewMode() {
+            isGridView = !isGridView;
+            const grid = document.getElementById('grid-container');
+            const table = document.getElementById('table-container');
+            const btn = document.getElementById('view-toggle-btn');
+            
+            if (isGridView) {
+                grid.style.display = 'grid'; table.style.display = 'none'; btn.innerHTML = '📋 Tabelle';
+            } else {
+                grid.style.display = 'none'; table.style.display = 'block'; btn.innerHTML = '🖼️ Raster';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+
+        function toggleContrast() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'contrast' ? 'system' : 'contrast');
+        }
+
+        function getColorClass(val) {
+            if (val >= 8.0) return 'color-high';
+            if (val >= 6.0) return 'color-mid';
+            return 'color-low';
+        }
+
+        function getFallbackImage(title) {
+            // Generiert ein sauberes SVG mit dem Filmtitel, falls das Cover offline ist
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450" fill="#1e293b"><rect width="300" height="450"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="18" font-weight="bold">${title}</text></svg>`;
+            return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+        }
+
+        /* --- MODAL LOGIK --- */
+        function openModal(id) {
+            const m = movies.find(i => i.id === id);
+            if (!m) return;
+
+            document.getElementById('modal-img').src = m.poster;
+            document.getElementById('modal-img').onerror = function() { this.src = getFallbackImage(m.titleOrig); };
+            document.getElementById('modal-year').innerText = m.year;
+            document.getElementById('modal-title').innerText = m.titleOrig;
+            document.getElementById('modal-title-de').innerText = m.titleDe ? `Deutscher Titel: ${m.titleDe}` : '';
+            document.getElementById('modal-genre').innerText = `Genre: ${m.genre}`;
+            
+            document.getElementById('modal-tristan').innerText = m.tristan;
+            document.getElementById('modal-vincent').innerText = m.vincent;
+            document.getElementById('modal-avg').innerText = m.avg;
+            document.getElementById('modal-avg').className = getColorClass(m.avg);
+            document.getElementById('modal-rt').innerText = m.rt;
+            document.getElementById('modal-imdb').innerText = m.imdb;
+
+            const modal = document.getElementById('movie-modal');
+            modal.classList.add('open');
+            modal.focus();
+        }
+
+        function closeModal() {
+            document.getElementById('movie-modal').classList.remove('open');
+            document.getElementById('btn-modal-again').style.display = 'none';
+        }
+
+        function showSurpriseMovie() {
+            if (movies.length === 0) return;
+            const randomId = movies[Math.floor(Math.random() * movies.length)].id;
+            openModal(randomId);
+            document.getElementById('btn-modal-again').style.display = 'inline-block';
+        }
+
+        // App starten
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
